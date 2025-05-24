@@ -1,0 +1,15 @@
+# built artifacts
+target/
+
+# maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEA
+.idea/
+*.iml
+
+# Mac
+.DS_Store
+
+# ignore your real credentials file
+src/main/resources/application.properties
