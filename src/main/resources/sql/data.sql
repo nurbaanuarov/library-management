@@ -1,2 +1,2 @@
 INSERT INTO roles(name)
-VALUES ('ADMIN'), ('LIBRARIAN'), ('USER');
+VALUES ('ADMIN'), ('LIBRARIAN'), ('READER');

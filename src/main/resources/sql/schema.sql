@@ -50,8 +50,8 @@ CREATE TABLE user_roles (
 -- 5. Авторы
 CREATE TABLE authors (
                          id   BIGSERIAL PRIMARY KEY,
-                         name VARCHAR(100) NOT NULL,
-                         surname VARCHAR(100) NOT NULL
+                         firs_name VARCHAR(100) NOT NULL,
+                         last_name VARCHAR(100) NOT NULL
 );
 
 -- 6. Жанры
