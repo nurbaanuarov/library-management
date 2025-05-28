@@ -1,12 +1,12 @@
 -- 1. Создать БД с UTF8 (если ещё не создана)
-CREATE DATABASE online_library
+CREATE DATABASE library_management
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
     LOCALE_PROVIDER = 'libc'
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
-\c online_library
+\c library_management
 
 -- 2. Таблица ролей
 CREATE TABLE roles (
@@ -21,8 +21,22 @@ CREATE TABLE users (
                        email          VARCHAR(100) NOT NULL UNIQUE,
                        password_hash  VARCHAR(60) NOT NULL,  -- hash
                        enabled        BOOLEAN NOT NULL DEFAULT TRUE,
-                       created_at     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
+                       created_at     TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+                       last_modified  TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
+
+-- trigger to auto-update last_modified
+CREATE OR REPLACE FUNCTION fn_update_last_modified()
+    RETURNS trigger AS $$
+BEGIN
+    NEW.last_modified := NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_users_last_modified
+    BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE PROCEDURE fn_update_last_modified();
 
 -- 4. Связующая таблица для many-to-many User⇄Role
 CREATE TABLE user_roles (
@@ -36,7 +50,8 @@ CREATE TABLE user_roles (
 -- 5. Авторы
 CREATE TABLE authors (
                          id   BIGSERIAL PRIMARY KEY,
-                         name VARCHAR(100) NOT NULL
+                         name VARCHAR(100) NOT NULL,
+                         surname VARCHAR(100) NOT NULL
 );
 
 -- 6. Жанры
