@@ -21,5 +21,6 @@ public class User {
     private String passwordHash;
     private boolean enabled = true;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private Set<Role> roles = new HashSet<>();
 }
