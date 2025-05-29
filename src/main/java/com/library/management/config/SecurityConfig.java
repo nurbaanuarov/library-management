@@ -1,6 +1,7 @@
 package com.library.management.config;
 
 import com.library.management.dao.UserDAO;
+import com.library.management.dao.UserRoleDAO;
 import com.library.management.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final UserDAO userDao;
+    private final UserRoleDAO userRoleDAO;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -77,6 +79,7 @@ public class SecurityConfig {
             if (user == null) {
                 throw new UsernameNotFoundException("User not found: " + username);
             }
+            user.setRoles(userRoleDAO.findByUserId(user.getId()));
             List<SimpleGrantedAuthority> auths = user.getRoles().stream()
                     .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
                     .toList();
