@@ -28,6 +28,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (userDao.findByUsername(form.getUsername()) != null) {
             throw new ValidationException("Username already taken");
         }
+        if (userDao.findByEmail(form.getEmail()) != null) {
+            throw new ValidationException("Email already taken");
+        }
         if (!form.getPassword().equals(form.getConfirmPassword())) {
             throw new ValidationException("Passwords do not match");
         }

@@ -1,23 +1,18 @@
-<!-- src/main/resources/templates/register.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <title>Register</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 <div class="container">
     <h2>Create an Account</h2>
-    <form th:action="@{/register}"
-          th:object="${regForm}"
-          method="post">
+    <form th:action="@{/register}" th:object="${regForm}" method="post">
 
         <div class="form-group">
             <label th:for="*{username}">Username</label>
-            <input type="text"
-                   th:field="*{username}"
-                   class="form-control" />
+            <input type="text" th:field="*{username}" class="form-control" />
             <div th:if="${#fields.hasErrors('username')}"
                  th:errors="*{username}"
                  class="error"></div>
@@ -25,9 +20,7 @@
 
         <div class="form-group">
             <label th:for="*{email}">Email</label>
-            <input type="email"
-                   th:field="*{email}"
-                   class="form-control" />
+            <input type="email" th:field="*{email}" class="form-control" />
             <div th:if="${#fields.hasErrors('email')}"
                  th:errors="*{email}"
                  class="error"></div>
@@ -35,9 +28,7 @@
 
         <div class="form-group">
             <label th:for="*{password}">Password</label>
-            <input type="password"
-                   th:field="*{password}"
-                   class="form-control" />
+            <input type="password" th:field="*{password}" class="form-control" />
             <div th:if="${#fields.hasErrors('password')}"
                  th:errors="*{password}"
                  class="error"></div>
@@ -45,15 +36,13 @@
 
         <div class="form-group">
             <label th:for="*{confirmPassword}">Confirm Password</label>
-            <input type="password"
-                   th:field="*{confirmPassword}"
-                   class="form-control" />
+            <input type="password" th:field="*{confirmPassword}" class="form-control" />
             <div th:if="${#fields.hasErrors('confirmPassword')}"
                  th:errors="*{confirmPassword}"
                  class="error"></div>
         </div>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn btn-primary">Register</button>
     </form>
     <p>Already have an account? <a th:href="@{/login}">Log in</a></p>
 </div>

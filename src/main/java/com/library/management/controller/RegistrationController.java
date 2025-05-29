@@ -42,7 +42,7 @@ public class RegistrationController {
             regService.register(form);
             return "redirect:/login?registered";
         } catch (ValidationException e) {
-            br.reject("registration.failed", e.getMessage());
+            br.reject("registration.failed", "Passwords do not match");
             return "register";
         }
     }
