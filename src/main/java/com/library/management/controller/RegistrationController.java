@@ -11,8 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/register")
 public class RegistrationController {
     private final RegistrationService regService;
 
@@ -21,13 +23,13 @@ public class RegistrationController {
         this.regService = rs;
     }
 
-    @GetMapping("/register")
+    @GetMapping
     public String showForm(Model model) {
         model.addAttribute("regForm", new RegistrationForm());
         return "register";
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public String process(
             @Valid
             @ModelAttribute("regForm") RegistrationForm form,
