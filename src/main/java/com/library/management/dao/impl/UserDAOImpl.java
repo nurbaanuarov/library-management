@@ -21,34 +21,20 @@ public class UserDAOImpl implements UserDAO {
     public User findByUsername(String username) {
         String sql = "SELECT id, username, email, password_hash, enabled, created_at " +
                 "FROM users WHERE username = ?";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    return null;
-                }
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setPasswordHash(rs.getString("password_hash"));
-                user.setEnabled(rs.getBoolean("enabled"));
-                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                return user;
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error querying user by username", e);
-        }
+        return getUser(username, sql);
     }
 
     @Override
     public User findByEmail(String email) {
         String sql = "SELECT id, username, email, password_hash, enabled, created_at " +
                 "FROM users WHERE email = ?";
+        return getUser(email, sql);
+    }
+
+    private User getUser(String param, String sql) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, email);
+            ps.setString(1, param);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
                     return null;

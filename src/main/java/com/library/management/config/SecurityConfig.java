@@ -55,7 +55,7 @@ public class SecurityConfig {
                         .successHandler((req, res, auth) -> {
                             var auths = auth.getAuthorities();
                             if (auths.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                                res.sendRedirect(req.getContextPath() + "/admin/dashboard");
+                                res.sendRedirect(req.getContextPath() + "/admin");
                             } else if (auths.stream().anyMatch(a -> a.getAuthority().equals("ROLE_LIBRARIAN"))) {
                                 res.sendRedirect(req.getContextPath() + "/librarian/requests");
                             } else {

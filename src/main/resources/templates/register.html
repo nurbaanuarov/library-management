@@ -8,6 +8,12 @@
 <body>
 <div class="container">
     <h2>Create an Account</h2>
+
+    <!--/* @thymesVar id="registrationError" type="java.lang.String" */-->
+    <div th:if="${registrationError}" class="error">
+        <p th:text="${registrationError}"></p>
+    </div>
+
     <form th:action="@{/register}" th:object="${regForm}" method="post">
 
         <div class="form-group">
