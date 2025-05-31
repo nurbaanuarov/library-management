@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">All Users</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<header>
+    <a th:href="@{/admin}">Dashboard</a>
+    <a th:href="@{/admin/users}">Users</a>
+    <a th:href="@{/admin/authors}">Authors</a>
+    <a th:href="@{/admin/books}">Books</a>
+</header>
+
+<div class="container">
+    <h2 th:text="${pageTitle}">All Users</h2>
+    <p>(Here you’d list all users in a table.)</p>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Enabled</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--
+        th:each="u : ${users}"
+        <tr>
+          <td th:text="${u.id}">1</td>
+          <td th:text="${u.username}">alice</td>
+          <td th:text="${u.email}">alice@example.com</td>
+          <td th:text="${u.enabled}">true</td>
+          <td th:text="${u.createdAt}">2025-05-30T12:00</td>
+        </tr>
+        -->
+        <tr>
+            <td colspan="5" style="text-align:center; color:#7f8c8d;">
+                No data yet. Populate <code>users</code> in your AdminController.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

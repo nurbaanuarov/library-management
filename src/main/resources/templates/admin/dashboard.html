@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">Admin Dashboard</title>
+
+    <!-- Link to our single admin.css for all admin pages -->
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<header>
+    <a th:href="@{/admin}">Dashboard</a>
+    <a th:href="@{/admin/users}">Users</a>
+    <a th:href="@{/admin/authors}">Authors</a>
+    <a th:href="@{/admin/books}">Books</a>
+    <!-- Optionally, a logout link on the right:
+         <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    -->
+</header>
+
+<div class="container">
+    <h2 th:text="${pageTitle}">Admin Dashboard</h2>
+    <p class="welcome">
+        Welcome to the Admin page! From here, you can manage users, authors, and books.
+    </p>
+    <!-- More dashboard content here… -->
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${pageTitle}">All Books</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<header>
+    <a th:href="@{/admin}">Dashboard</a>
+    <a th:href="@{/admin/users}">Users</a>
+    <a th:href="@{/admin/authors}">Authors</a>
+    <a th:href="@{/admin/books}">Books</a>
+</header>
+
+<div class="container">
+    <h2 th:text="${pageTitle}">All Books</h2>
+    <p>(Here you’d list all books in a table.)</p>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Author</th>
+            <th>Total Copies</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--
+        th:each="b : ${books}"
+        <tr>
+          <td th:text="${b.id}">1</td>
+          <td th:text="${b.title}">Crime and Punishment</td>
+          <td th:text="${b.genre.name}">Fiction</td>
+          <td th:text="${b.author.fullName}">Fyodor Dostoevsky</td>
+          <td th:text="${b.totalCopies}">5</td>
+        </tr>
+        -->
+        <tr>
+            <td colspan="5" style="text-align:center; color:#7f8c8d;">
+                No data yet. Populate <code>books</code> in your AdminController.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
