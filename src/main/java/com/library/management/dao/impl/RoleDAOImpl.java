@@ -14,18 +14,15 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class RoleDAOImpl implements RoleDAO {
-    private final DataSource dataSource;
+    DataSource dataSource;
 
-    private static final String SELECT_BY_NAME =
-            "SELECT id, name FROM roles WHERE name = ?";
+    private static final String SELECT_BY_NAME = "SELECT id, name FROM roles WHERE name = ?";
 
-    private static final String SELECT_ALL =
-            "SELECT id, name FROM roles";
+    private static final String SELECT_ALL = "SELECT id, name FROM roles";
 
     @Override
     public Role findByName(String name) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME)) {
 
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
@@ -45,9 +42,7 @@ public class RoleDAOImpl implements RoleDAO {
     @Override
     public Set<Role> findAll() {
         Set<Role> roles = new HashSet<>();
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ALL); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Role r = new Role();
