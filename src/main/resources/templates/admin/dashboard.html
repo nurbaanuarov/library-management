@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title th:text="${pageTitle}">Admin Dashboard</title>
+    <title>Admin Dashboard</title>
 
     <!-- Link to our single admin.css for all admin pages -->
     <link rel="stylesheet" th:href="@{/css/admin.css}" />
@@ -13,9 +13,7 @@
     <a th:href="@{/admin/users}">Users</a>
     <a th:href="@{/admin/authors}">Authors</a>
     <a th:href="@{/admin/books}">Books</a>
-    <!-- Optionally, a logout link on the right:
-         <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
-    -->
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
 </header>
 
 <div class="container">

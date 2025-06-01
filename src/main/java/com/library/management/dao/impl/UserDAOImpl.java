@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,21 +18,7 @@ public class UserDAOImpl implements UserDAO {
 
     private final DataSource dataSource;
 
-    @Override
-    public User findByUsername(String username) {
-        String sql = "SELECT id, username, email, password_hash, enabled, created_at " +
-                "FROM users WHERE username = ?";
-        return getUser(username, sql);
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        String sql = "SELECT id, username, email, password_hash, enabled, created_at " +
-                "FROM users WHERE email = ?";
-        return getUser(email, sql);
-    }
-
-    private User getUser(String param, String sql) {
+    private User getUser(String param, String sql) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, param);
@@ -39,17 +26,62 @@ public class UserDAOImpl implements UserDAO {
                 if (!rs.next()) {
                     return null;
                 }
-                User user = new User();
-                user.setId(rs.getLong("id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setPasswordHash(rs.getString("password_hash"));
-                user.setEnabled(rs.getBoolean("enabled"));
-                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                return user;
+                return getUser(rs);
+            }
+        }
+    }
+
+    private User getUser(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setUsername(rs.getString("username"));
+        user.setEmail(rs.getString("email"));
+        user.setPasswordHash(rs.getString("password_hash"));
+        user.setEnabled(rs.getBoolean("enabled"));
+        user.setCreatedAt(rs.getTimestamp("created_at"));
+        user.setLastModified(rs.getTimestamp("last_modified"));
+
+        return user;
+    }
+
+    @Override
+    public User findById(Long id) {
+        String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
+                "FROM users WHERE id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                return getUser(rs);
             }
         } catch (SQLException e) {
+            throw new DataAccessException("Error querying user by id", e);
+        }
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
+                "FROM users WHERE username = ?";
+        try {
+            return getUser(username, sql);
+        } catch (SQLException e) {
             throw new DataAccessException("Error querying user by username", e);
+        }
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
+                "FROM users WHERE email = ?";
+        try {
+            return getUser(email, sql);
+        } catch (SQLException e) {
+            throw new DataAccessException("Error querying user by email", e);
         }
     }
 
@@ -61,7 +93,8 @@ public class UserDAOImpl implements UserDAO {
                    email,
                    password_hash,
                    enabled,
-                   created_at
+                   created_at,
+                   last_modified
               FROM users
             """;
 
@@ -72,17 +105,7 @@ public class UserDAOImpl implements UserDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                User user = new User();
-                long id = rs.getLong("id");
-
-                user.setId(id);
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setPasswordHash(rs.getString("password_hash"));
-                user.setEnabled(rs.getBoolean("enabled"));
-                user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-
-                users.add(user);
+                users.add(getUser(rs));
             }
 
             return users;
@@ -95,8 +118,8 @@ public class UserDAOImpl implements UserDAO {
     public void save(User user) {
         String sql = """
             INSERT INTO users (
-                username, email, password_hash, enabled
-            ) VALUES (?, ?, ?, ?)
+                username, email, password_hash, enabled, created_at, last_modified
+            ) VALUES (?, ?, ?, ?, ?, ?)
             """;
 
         try (Connection conn = dataSource.getConnection();
@@ -106,6 +129,8 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPasswordHash());
             ps.setBoolean(4, user.isEnabled());
+            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
 
             int affected = ps.executeUpdate();
             if (affected == 0) {
@@ -122,6 +147,26 @@ public class UserDAOImpl implements UserDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException("Error saving new user", e);
+        }
+    }
+
+    @Override
+    public void update(User user) {
+        String sql = "UPDATE users SET email = ?, password_hash = ?, enabled = ?, last_modified = ? WHERE id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getPasswordHash());
+            ps.setBoolean(3, user.isEnabled());
+            ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setLong(5, user.getId());
+
+            int updated = ps.executeUpdate();
+            if (updated == 0) {
+                throw new DataAccessException("Updating user failed, no rows affected");
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error updating user", e);
         }
     }
 }

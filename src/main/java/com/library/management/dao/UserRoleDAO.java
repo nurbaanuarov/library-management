@@ -7,4 +7,5 @@ import java.util.Set;
 public interface UserRoleDAO {
     Set<Role> findByUserId(long userId);
     void addRoleForUser(long userId, long roleId);
+    void removeAllRolesForUser(long userId);
 }
