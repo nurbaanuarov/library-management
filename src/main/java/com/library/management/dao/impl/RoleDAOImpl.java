@@ -14,7 +14,7 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class RoleDAOImpl implements RoleDAO {
-    DataSource dataSource;
+    private final DataSource dataSource;
 
     private static final String SELECT_BY_NAME = "SELECT id, name FROM roles WHERE name = ?";
 

@@ -21,9 +21,6 @@ public class AdminUserController {
     private final UserService userService;
     private final RoleService roleService;
 
-    /**
-     * 1) List all users
-     */
     @GetMapping
     public String listUsers(Model model) {
         List<User> allUsers = userService.findAllUsers();
@@ -31,16 +28,18 @@ public class AdminUserController {
         return "admin/users";
     }
 
-    /**
-     * 2) Show edit form for a single user
-     */
     @GetMapping("/{id}")
     public String showEditForm(@PathVariable("id") long id, Model model) {
         User user = userService.findById(id);
         if (user == null) {
             throw new ValidationException("User not found with id=" + id);
         }
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(role -> role.getName().equals("ADMIN"));
+
         model.addAttribute("user", user);
+        model.addAttribute("isAdminUser", isAdmin);
 
         Set<Role> allRoles = roleService.findAllRoles();
         model.addAttribute("allRoles", allRoles);
@@ -54,9 +53,7 @@ public class AdminUserController {
         return "admin/user-edit";
     }
 
-    /**
-     * 3) Process the form submission
-     */
+
     @PostMapping("/{id}")
     public String processEditForm(
             @PathVariable("id") long id,

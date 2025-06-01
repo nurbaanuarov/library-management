@@ -19,30 +19,28 @@
     <h2 th:text="'Edit User ID ' + ${user.id} + ': ' + ${user.username}">Edit User</h2>
 
     <form th:action="@{|/admin/users/${user.id}|}" method="post">
-        <!-- (CSRF tokens are inserted automatically by Spring Security if enabled) -->
 
-        <!-- Username (read-only) -->
         <div class="form-group">
             <label>Username:</label>
-            <input type="text" th:value="${user.username}" readonly class="form-control" />
+            <p th:text="${user.username}" class="form-control-static"></p>
         </div>
 
-        <!-- Email (editable if you wish) -->
         <div class="form-group">
             <label>Email:</label>
-            <input type="email" name="email" th:value="${user.email}" class="form-control" />
+            <p th:text="${user.email}" class="form-control-static"></p>
         </div>
 
-        <!-- Enabled? -->
+        <!-- Enabled checkbox -->
         <div class="form-group">
             <label>
                 <input type="checkbox" name="enabled"
-                       th:checked="${user.enabled}" />
+                       th:checked="${user.enabled}"
+                       th:disabled="${isAdminUser}" />
                 Enabled
             </label>
         </div>
 
-        <!-- Roles (checkboxes for allRoles) -->
+        <!-- Roles -->
         <div class="form-group">
             <label>Roles:</label>
             <div th:each="r : ${allRoles}">
@@ -51,13 +49,17 @@
                            name="roles"
                            th:value="${r.id}"
                            th:checked="${userRoleIds.contains(r.id)}"
-                    />
+                           th:disabled="${isAdminUser}" />
                     <span th:text="${r.name}">ROLE_NAME</span>
                 </label>
             </div>
         </div>
 
-        <button type="submit" class="btn">Save Changes</button>
+        <!-- Submit button (hidden for admin users) -->
+        <button type="submit" class="btn" th:if="${!isAdminUser}">
+            Save Changes
+        </button>
+
         <a th:href="@{/admin/users}" class="btn"
            style="background-color: #bdc3c7; margin-left: 8px; color: #2c3e50;">
             Cancel
