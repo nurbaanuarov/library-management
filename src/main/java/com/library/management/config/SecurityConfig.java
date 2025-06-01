@@ -57,9 +57,9 @@ public class SecurityConfig {
                             if (auths.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                                 res.sendRedirect(req.getContextPath() + "/admin");
                             } else if (auths.stream().anyMatch(a -> a.getAuthority().equals("ROLE_LIBRARIAN"))) {
-                                res.sendRedirect(req.getContextPath() + "/librarian/requests");
+                                res.sendRedirect(req.getContextPath() + "/librarian");
                             } else {
-                                res.sendRedirect(req.getContextPath() + "/books/list");
+                                res.sendRedirect(req.getContextPath() + "/books");
                             }
                         })
                 )
