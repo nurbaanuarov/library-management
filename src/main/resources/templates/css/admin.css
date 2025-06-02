@@ -112,3 +112,9 @@ table tbody tr:nth-child(even) {
     background-color: #e74c3c;   /* red */
     color: white;
 }
+
+.error {
+    margin-top: 1rem;
+    color: #d9534f;
+    text-align: center;
+}

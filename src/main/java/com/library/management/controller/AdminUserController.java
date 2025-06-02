@@ -1,14 +1,17 @@
 package com.library.management.controller;
 
+import com.library.management.dto.RegistrationForm;
 import com.library.management.model.Role;
 import com.library.management.model.User;
 import com.library.management.service.RoleService;
 import com.library.management.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,9 +26,23 @@ public class AdminUserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        List<User> allUsers = userService.findAllUsers();
-        model.addAttribute("users", allUsers);
+        model.addAttribute("users", userService.findAllUsers());
+        model.addAttribute("allRoles", roleService.findAllRoles());
+        model.addAttribute("form", new RegistrationForm());
         return "admin/users";
+    }
+
+    @PostMapping("/new")
+    public String createUser(@Valid @ModelAttribute("form") RegistrationForm form,
+                             @RequestParam("roles") Set<Long> roleIds,
+                             RedirectAttributes flash) {
+        try {
+            userService.createUser(form, roleIds);
+        } catch (ValidationException e) {
+            flash.addFlashAttribute("form", form);
+            flash.addFlashAttribute("userCreationError", e.getMessage());
+        }
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/{id}")

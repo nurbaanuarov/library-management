@@ -52,6 +52,47 @@
         </tr>
         </tbody>
     </table>
+
+    <h3>Add New User</h3>
+    <!--/*@thymesVar id="userCreationError" type="java.lang.String"*/-->
+    <div th:if="${userCreationError}" class="error">
+        <p th:text="${userCreationError}">User creation failed.</p>
+    </div>
+
+    <form th:action="@{/admin/users/new}" th:object="${form}" method="post">
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" th:field="*{username}" required />
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" required />
+        </div>
+
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" th:field="*{password}" required />
+        </div>
+
+        <div class="form-group">
+            <label>Repeat password:</label>
+            <input type="password" th:field="*{confirmPassword}" required />
+        </div>
+
+        <div class="form-group">
+            <label>Roles:</label>
+            <div th:each="r : ${allRoles}">
+                <label>
+                    <input type="checkbox" name="roles" th:value="${r.id}" />
+                    <span th:text="${r.name}">ROLE_NAME</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="btn">Add User</button>
+    </form>
+
 </div>
 </body>
 </html>

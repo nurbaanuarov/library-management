@@ -2,12 +2,13 @@ package com.library.management.service.impl;
 
 import com.library.management.dao.UserDAO;
 import com.library.management.dao.UserRoleDAO;
+import com.library.management.dto.RegistrationForm;
 import com.library.management.model.Role;
 import com.library.management.model.User;
+import com.library.management.service.RegistrationService;
 import com.library.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserDAO userDao;
     private final UserRoleDAO userRoleDao;
+
+    private final RegistrationService registrationService;
 
     @Override
     public List<User> findAllUsers() {
@@ -34,7 +37,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void updateUser(User user, Set<Long> newRoleIds) {
         Set<String> currentRoleIds = userRoleDao.findByUserId(user.getId())
                 .stream()
@@ -53,4 +55,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void createUser(RegistrationForm form, Set<Long> roleIds) {
+        registrationService.register(form);
+
+        long userId = userDao.findByUsername(form.getUsername()).getId();
+
+        userRoleDao.removeAllRolesForUser(userId);
+        roleIds.forEach(roleId ->
+                userRoleDao.addRoleForUser(userId, roleId)
+        );
+    }
 }
