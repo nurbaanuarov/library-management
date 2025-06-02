@@ -28,16 +28,10 @@ public class RegistrationController {
 
     @PostMapping
     public String process(
-            @Valid
-            @ModelAttribute("regForm") RegistrationForm form,
+            @Valid @ModelAttribute("regForm") RegistrationForm form,
             BindingResult br,
             RedirectAttributes flash
     ) {
-        if (br.hasErrors()) {
-            flash.addFlashAttribute("org.springframework.validation.BindingResult.regForm", br);
-            flash.addFlashAttribute("regForm", form);
-            return "redirect:/register";
-        }
         try {
             regService.register(form);
             return "redirect:/login?registered";
