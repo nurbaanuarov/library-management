@@ -1,9 +1,10 @@
 package com.library.management.dao.impl;
 
-import com.library.management.dao.AbstractTransactionalDAO;
 import com.library.management.dao.UserRoleDAO;
 import com.library.management.exception.DataAccessException;
 import com.library.management.model.Role;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -12,11 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Repository
-public class UserRoleDAOImpl extends AbstractTransactionalDAO implements UserRoleDAO {
-
-    public UserRoleDAOImpl(DataSource dataSource) {
-        super(dataSource);
-    }
+@RequiredArgsConstructor
+public class UserRoleDAOImpl implements UserRoleDAO {
+    DataSource dataSource;
 
     @Override
     public Set<Role> findByUserId(long userId) {
@@ -28,8 +27,9 @@ public class UserRoleDAOImpl extends AbstractTransactionalDAO implements UserRol
                 """;
 
         Set<Role> roles = new HashSet<>();
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setLong(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -49,32 +49,31 @@ public class UserRoleDAOImpl extends AbstractTransactionalDAO implements UserRol
     public void addRoleForUser(long userId, long roleId) {
         String sql = "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)";
 
-        executeInTransaction(con -> {
-            try (PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setLong(1, userId);
-                ps.setLong(2, roleId);
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                throw new DataAccessException(
-                        "Error adding role_id=" + roleId + " for user_id=" + userId, e
-                );
-            }
-        });
+        try {
+            Connection con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, userId);
+            ps.setLong(2, roleId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(
+                    "Error adding role_id=" + roleId + " for user_id=" + userId, e
+            );
+        }
     }
 
     @Override
     public void removeAllRolesForUser(long userId) {
         String sql = "DELETE FROM user_roles WHERE user_id = ?";
-        executeInTransaction(con -> {
-                    try (PreparedStatement ps = con.prepareStatement(sql)) {
-                        ps.setLong(1, userId);
-                        ps.executeUpdate();
-                    } catch (SQLException e) {
-                        throw new DataAccessException(
-                                "Error removing all roles for user_id=" + userId, e
-                        );
-                    }
-                }
-        );
+        try {
+            Connection con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setLong(1, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(
+                    "Error removing all roles for user_id=" + userId, e
+            );
+        }
     }
 }

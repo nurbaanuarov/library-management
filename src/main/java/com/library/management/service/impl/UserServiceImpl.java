@@ -9,6 +9,7 @@ import com.library.management.service.RegistrationService;
 import com.library.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final RegistrationService registrationService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> findAllUsers() {
         List<User> users = userDao.findAll();
         users.forEach(user -> user.setRoles(userRoleDao.findByUserId(user.getId())));
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User findById(long id) {
         User user = userDao.findById(id);
         user.setRoles(userRoleDao.findByUserId(user.getId()));
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateUser(User user, Set<Long> newRoleIds) {
         Set<String> currentRoleIds = userRoleDao.findByUserId(user.getId())
                 .stream()
@@ -56,6 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void createUser(RegistrationForm form, Set<Long> roleIds) {
         registrationService.register(form);
 

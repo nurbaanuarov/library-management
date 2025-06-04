@@ -4,6 +4,7 @@ import com.library.management.dao.RoleDAO;
 import com.library.management.exception.DataAccessException;
 import com.library.management.model.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -22,8 +23,9 @@ public class RoleDAOImpl implements RoleDAO {
 
     @Override
     public Role findByName(String name) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME)) {
+        try {
+            Connection conn = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME);
 
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
@@ -43,9 +45,10 @@ public class RoleDAOImpl implements RoleDAO {
     @Override
     public Set<Role> findAll() {
         Set<Role> roles = new HashSet<>();
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
+        try {
+            Connection conn = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 Role r = new Role();

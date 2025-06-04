@@ -11,6 +11,7 @@ import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -22,6 +23,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final RoleDAO roleDao;
 
     @Override
+    @Transactional
     public void register(RegistrationForm form) {
         if (userDao.findByUsername(form.getUsername()) != null) {
             throw new ValidationException("Username already taken");

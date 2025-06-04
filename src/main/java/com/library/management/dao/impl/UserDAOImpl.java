@@ -1,9 +1,10 @@
 package com.library.management.dao.impl;
 
-import com.library.management.dao.AbstractTransactionalDAO;
 import com.library.management.dao.UserDAO;
 import com.library.management.exception.DataAccessException;
 import com.library.management.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -13,15 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
-
-    public UserDAOImpl(DataSource dataSource) {
-        super(dataSource);
-    }
+@RequiredArgsConstructor
+public class UserDAOImpl implements UserDAO {
+    private final DataSource dataSource;
 
     private User getUserByParameter(String param, String sql) throws SQLException {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, param);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
@@ -29,6 +29,8 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
                 }
                 return getUser(rs);
             }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error querying user by parameter", e);
         }
     }
 
@@ -49,8 +51,9 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
     public User findById(Long id) {
         String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
                 "FROM users WHERE id = ?";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
@@ -123,49 +126,53 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
                 ) VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
-        executeInTransaction(con -> {
-            try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try {
+            Connection con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-                ps.setString(1, user.getUsername());
-                ps.setString(2, user.getEmail());
-                ps.setString(3, user.getPasswordHash());
-                ps.setBoolean(4, user.isEnabled());
-                ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-                ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPasswordHash());
+            ps.setBoolean(4, user.isEnabled());
+            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
 
-                int affected = ps.executeUpdate();
-                if (affected == 0) {
-                    throw new DataAccessException("Creating user failed, no rows affected");
-                }
+            int affected = ps.executeUpdate();
+            if (affected == 0) {
+                throw new DataAccessException("Creating user failed, no rows affected");
+            }
 
-                try (ResultSet keys = ps.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        user.setId(keys.getLong(1));
-                    } else {
-                        throw new DataAccessException("Creating user failed, no ID obtained");
-                    }
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    user.setId(keys.getLong(1));
+                } else {
+                    throw new DataAccessException("Creating user failed, no ID obtained");
                 }
             }
-        });
+        } catch (SQLException e) {
+            throw new DataAccessException("Error saving user", e);
+        }
     }
 
     @Override
     public void update(User user) {
         String sql = "UPDATE users SET email = ?, password_hash = ?, enabled = ?, last_modified = ? WHERE id = ?";
 
-        executeInTransaction(con -> {
-            try (PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setString(1, user.getEmail());
-                ps.setString(2, user.getPasswordHash());
-                ps.setBoolean(3, user.isEnabled());
-                ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
-                ps.setLong(5, user.getId());
+        try {
+            Connection con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getPasswordHash());
+            ps.setBoolean(3, user.isEnabled());
+            ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setLong(5, user.getId());
 
-                int updated = ps.executeUpdate();
-                if (updated == 0) {
-                    throw new DataAccessException("Updating user failed, no rows affected");
-                }
+            int updated = ps.executeUpdate();
+            if (updated == 0) {
+                throw new DataAccessException("Updating user failed, no rows affected");
             }
-        });
+        } catch (SQLException e) {
+            throw new DataAccessException("Error updating user", e);
+        }
     }
 }
