@@ -19,7 +19,7 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
         super(dataSource);
     }
 
-    private User getUser(String param, String sql) throws SQLException {
+    private User getUserByParameter(String param, String sql) throws SQLException {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, param);
@@ -69,7 +69,7 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
         String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
                 "FROM users WHERE username = ?";
         try {
-            return getUser(username, sql);
+            return getUserByParameter(username, sql);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by username", e);
         }
@@ -80,7 +80,7 @@ public class UserDAOImpl extends AbstractTransactionalDAO implements UserDAO {
         String sql = "SELECT id, username, email, password_hash, enabled, created_at, last_modified " +
                 "FROM users WHERE email = ?";
         try {
-            return getUser(email, sql);
+            return getUserByParameter(email, sql);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by email", e);
         }

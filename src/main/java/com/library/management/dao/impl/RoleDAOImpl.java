@@ -22,7 +22,8 @@ public class RoleDAOImpl implements RoleDAO {
 
     @Override
     public Role findByName(String name) {
-        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME)) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME)) {
 
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
@@ -42,7 +43,9 @@ public class RoleDAOImpl implements RoleDAO {
     @Override
     public Set<Role> findAll() {
         Set<Role> roles = new HashSet<>();
-        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ALL); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Role r = new Role();
