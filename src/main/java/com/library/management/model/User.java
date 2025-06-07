@@ -1,6 +1,7 @@
 package com.library.management.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.Set;
 /**
  * Сущность пользователя.
  */
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -25,23 +25,24 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     @Transactional
     public void register(RegistrationForm form) {
-        if (userDao.findByUsername(form.getUsername()) != null) {
+        if (userDao.findByUsername(form.getUsername()).isPresent()) {
             throw new ValidationException("Username already taken");
         }
-        if (userDao.findByEmail(form.getEmail()) != null) {
+        if (userDao.findByEmail(form.getEmail()).isPresent()) {
             throw new ValidationException("Email already taken");
         }
         if (!form.getPassword().equals(form.getConfirmPassword())) {
             throw new ValidationException("Passwords do not match");
         }
-        User user = new User();
-        user.setUsername(form.getUsername());
-        user.setEmail(form.getEmail());
-        user.setPasswordHash(encoder.encode(form.getPassword()));
-        user.setEnabled(true);
+        User user = User.builder()
+                .username(form.getUsername())
+                .email(form.getEmail())
+                .passwordHash(encoder.encode(form.getPassword()))
+                .enabled(true)
+                .build();
         userDao.save(user);
 
-        Role readerRole = roleDao.findByName("READER");
+        Role readerRole = roleDao.findByName("READER").orElseThrow(RuntimeException::new);
         userRoleDao.addRoleForUser(user.getId(), readerRole.getId());
     }
 }

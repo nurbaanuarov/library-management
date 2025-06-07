@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -22,7 +23,7 @@ public class RoleDAOImpl implements RoleDAO {
     private static final String SELECT_ALL = "SELECT id, name FROM roles";
 
     @Override
-    public Role findByName(String name) {
+    public Optional<Role> findByName(String name) {
         try {
             Connection conn = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME);
@@ -30,12 +31,13 @@ public class RoleDAOImpl implements RoleDAO {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
-                    return null;
+                    return Optional.empty();
                 }
-                Role r = new Role();
-                r.setId(rs.getLong("id"));
-                r.setName(rs.getString("name"));
-                return r;
+                Role r = Role.builder()
+                        .id(rs.getLong("id"))
+                        .name(rs.getString("name"))
+                        .build();
+                return Optional.of(r);
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying role by name: " + name, e);
@@ -51,9 +53,10 @@ public class RoleDAOImpl implements RoleDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Role r = new Role();
-                r.setId(rs.getLong("id"));
-                r.setName(rs.getString("name"));
+                Role r = Role.builder()
+                        .id(rs.getLong("id"))
+                        .name(rs.getString("name"))
+                        .build();
                 roles.add(r);
             }
             return roles;

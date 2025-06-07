@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,20 +24,21 @@ public class UserServiceImpl implements UserService {
 
     private final RegistrationService registrationService;
 
-    @Override
     @Transactional(readOnly = true)
-    public List<User> findAllUsers() {
-        List<User> users = userDao.findAll();
-        users.forEach(user -> user.setRoles(userRoleDao.findByUserId(user.getId())));
-        return users;
+    public List<User> findAll() {
+        return userDao.findAll().stream().map(userMapping()).toList();
     }
 
+    private Function<User, User> userMapping() {
+        return user -> {
+            user.setRoles(userRoleDao.findByUserId(user.getId()));
+            return user;
+        };
+    }
     @Override
     @Transactional(readOnly = true)
     public User findById(long id) {
-        User user = userDao.findById(id);
-        user.setRoles(userRoleDao.findByUserId(user.getId()));
-        return user;
+        return userDao.findById(id).map(userMapping()).orElseThrow(RuntimeException::new);
     }
 
     @Override
@@ -64,7 +66,8 @@ public class UserServiceImpl implements UserService {
     public void createUser(RegistrationForm form, Set<Long> roleIds) {
         registrationService.register(form);
 
-        long userId = userDao.findByUsername(form.getUsername()).getId();
+        User user = userDao.findByUsername(form.getUsername()).orElseThrow(RuntimeException::new);
+        long userId = user.getId();
 
         userRoleDao.removeAllRolesForUser(userId);
         roleIds.forEach(roleId ->

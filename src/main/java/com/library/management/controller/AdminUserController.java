@@ -26,7 +26,7 @@ public class AdminUserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        model.addAttribute("users", userService.findAllUsers());
+        model.addAttribute("users", userService.findAll());
         model.addAttribute("allRoles", roleService.findAllRoles());
         model.addAttribute("form", new RegistrationForm());
         return "admin/users";

@@ -75,14 +75,14 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User user = userDao.findByUsername(username);
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found: " + username);
-            }
+            User user = userDao.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
             user.setRoles(userRoleDAO.findByUserId(user.getId()));
+
             List<SimpleGrantedAuthority> auths = user.getRoles().stream()
                     .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
                     .toList();
+
             return new org.springframework.security.core.userdetails.User(
                     user.getUsername(),
                     user.getPasswordHash(),

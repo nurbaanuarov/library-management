@@ -17,19 +17,21 @@ import java.util.Set;
 public class UserRoleDAOImpl implements UserRoleDAO {
     DataSource dataSource;
 
-    @Override
-    public Set<Role> findByUserId(long userId) {
-        String sql = """
+    private static final String SELECT_BY_USER_ID = """
                 SELECT r.id, r.name
                   FROM roles r
                   JOIN user_roles ur ON ur.role_id = r.id
                  WHERE ur.user_id = ?
                 """;
+    private static final String INSERT = "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)";
+    private static final String DELETE = "DELETE FROM user_roles WHERE user_id = ?";
 
+    @Override
+    public Set<Role> findByUserId(long userId) {
         Set<Role> roles = new HashSet<>();
         try {
             Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(SELECT_BY_USER_ID);
             ps.setLong(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -47,11 +49,9 @@ public class UserRoleDAOImpl implements UserRoleDAO {
 
     @Override
     public void addRoleForUser(long userId, long roleId) {
-        String sql = "INSERT INTO user_roles (user_id, role_id) VALUES (?, ?)";
-
         try {
             Connection con = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(INSERT);
             ps.setLong(1, userId);
             ps.setLong(2, roleId);
             ps.executeUpdate();
@@ -64,10 +64,9 @@ public class UserRoleDAOImpl implements UserRoleDAO {
 
     @Override
     public void removeAllRolesForUser(long userId) {
-        String sql = "DELETE FROM user_roles WHERE user_id = ?";
         try {
             Connection con = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(DELETE);
             ps.setLong(1, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
