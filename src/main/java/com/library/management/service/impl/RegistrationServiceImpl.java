@@ -4,11 +4,11 @@ import com.library.management.dao.RoleDAO;
 import com.library.management.dao.UserDAO;
 import com.library.management.dao.UserRoleDAO;
 import com.library.management.dto.RegistrationForm;
+import com.library.management.exception.InputValidationException;
 import com.library.management.exception.RoleNotFoundException;
 import com.library.management.model.Role;
 import com.library.management.model.User;
 import com.library.management.service.RegistrationService;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,15 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Transactional
     public void register(RegistrationForm form) {
         if (userDao.findByUsername(form.getUsername()).isPresent()) {
-            throw new ValidationException("Username already taken");
+            throw new InputValidationException("Username already taken");
         }
         if (userDao.findByEmail(form.getEmail()).isPresent()) {
-            throw new ValidationException("Email already taken");
+            throw new InputValidationException("Email already taken");
         }
         if (!form.getPassword().equals(form.getConfirmPassword())) {
-            throw new ValidationException("Passwords do not match");
+            throw new InputValidationException("Passwords do not match");
         }
+
         User user = User.builder()
                 .username(form.getUsername())
                 .email(form.getEmail())

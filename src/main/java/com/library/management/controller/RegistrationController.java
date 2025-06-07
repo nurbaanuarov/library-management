@@ -1,9 +1,9 @@
 package com.library.management.controller;
 
 import com.library.management.dto.RegistrationForm;
+import com.library.management.exception.InputValidationException;
 import com.library.management.service.RegistrationService;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +35,7 @@ public class RegistrationController {
         try {
             regService.register(form);
             return "redirect:/login?registered";
-        } catch (ValidationException e) {
+        } catch (InputValidationException e) {
             br.reject("registration.failed", e.getMessage());
             flash.addFlashAttribute("registrationError", e.getMessage());
             flash.addFlashAttribute("regForm", form);
