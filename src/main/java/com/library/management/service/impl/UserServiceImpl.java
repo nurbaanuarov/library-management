@@ -3,6 +3,7 @@ package com.library.management.service.impl;
 import com.library.management.dao.UserDAO;
 import com.library.management.dao.UserRoleDAO;
 import com.library.management.dto.RegistrationForm;
+import com.library.management.exception.UserNotFoundException;
 import com.library.management.model.Role;
 import com.library.management.model.User;
 import com.library.management.service.RegistrationService;
@@ -38,7 +39,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User findById(long id) {
-        return userDao.findById(id).map(userMapping()).orElseThrow(RuntimeException::new);
+        return userDao.findById(id).map(userMapping())
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
 
     @Override
@@ -66,7 +68,8 @@ public class UserServiceImpl implements UserService {
     public void createUser(RegistrationForm form, Set<Long> roleIds) {
         registrationService.register(form);
 
-        User user = userDao.findByUsername(form.getUsername()).orElseThrow(RuntimeException::new);
+        User user = userDao.findByUsername(form.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found after registration: " + form.getUsername()));
         long userId = user.getId();
 
         userRoleDao.removeAllRolesForUser(userId);

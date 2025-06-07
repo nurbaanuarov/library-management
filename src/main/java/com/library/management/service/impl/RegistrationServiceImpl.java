@@ -4,6 +4,7 @@ import com.library.management.dao.RoleDAO;
 import com.library.management.dao.UserDAO;
 import com.library.management.dao.UserRoleDAO;
 import com.library.management.dto.RegistrationForm;
+import com.library.management.exception.RoleNotFoundException;
 import com.library.management.model.Role;
 import com.library.management.model.User;
 import com.library.management.service.RegistrationService;
@@ -42,7 +43,8 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .build();
         userDao.save(user);
 
-        Role readerRole = roleDao.findByName("READER").orElseThrow(RuntimeException::new);
+        Role readerRole = roleDao.findByName("READER")
+                .orElseThrow(() -> new RoleNotFoundException("Role READER not found"));
         userRoleDao.addRoleForUser(user.getId(), readerRole.getId());
     }
 }
