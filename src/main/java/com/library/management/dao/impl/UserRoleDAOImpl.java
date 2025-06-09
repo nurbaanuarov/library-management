@@ -15,7 +15,7 @@ import java.util.Set;
 @Repository
 @RequiredArgsConstructor
 public class UserRoleDAOImpl implements UserRoleDAO {
-    DataSource dataSource;
+    private final DataSource dataSource;
 
     private static final String SELECT_BY_USER_ID = """
                 SELECT r.id, r.name
@@ -29,9 +29,10 @@ public class UserRoleDAOImpl implements UserRoleDAO {
     @Override
     public Set<Role> findByUserId(long userId) {
         Set<Role> roles = new HashSet<>();
+        Connection con = null;
         try {
-            Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(SELECT_BY_USER_ID);
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_BY_USER_ID);
             ps.setLong(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -43,14 +44,17 @@ public class UserRoleDAOImpl implements UserRoleDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying roles for user_id=" + userId, e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
         return roles;
     }
 
     @Override
     public void addRoleForUser(long userId, long roleId) {
+        Connection con = null;
         try {
-            Connection con = DataSourceUtils.getConnection(dataSource);
+            con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(INSERT);
             ps.setLong(1, userId);
             ps.setLong(2, roleId);
@@ -59,13 +63,16 @@ public class UserRoleDAOImpl implements UserRoleDAO {
             throw new DataAccessException(
                     "Error adding role_id=" + roleId + " for user_id=" + userId, e
             );
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
     @Override
     public void removeAllRolesForUser(long userId) {
+        Connection con = null;
         try {
-            Connection con = DataSourceUtils.getConnection(dataSource);
+            con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(DELETE);
             ps.setLong(1, userId);
             ps.executeUpdate();
@@ -73,6 +80,8 @@ public class UserRoleDAOImpl implements UserRoleDAO {
             throw new DataAccessException(
                     "Error removing all roles for user_id=" + userId, e
             );
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.library.management.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -8,16 +10,14 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.context.support.ResourceBundleMessageSource;
-
 
 import java.util.Locale;
 
@@ -26,7 +26,8 @@ import java.util.Locale;
 @ComponentScan(basePackages = "com.library.management")
 public class WebConfig implements WebMvcConfigurer {
 
-    // 1) Раздача статики (css/js/img)
+    private static final Logger log = LoggerFactory.getLogger(WebConfig.class);
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
@@ -34,7 +35,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/templates/css/");
     }
 
-    // 2) Thymeleaf resolver
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver r = new SpringResourceTemplateResolver();
@@ -51,7 +51,6 @@ public class WebConfig implements WebMvcConfigurer {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(templateResolver());
         engine.setEnableSpringELCompiler(true);
-        // engine.addDialect(new LayoutDialect()); // если используете layout-dialect
         return engine;
     }
 
@@ -63,23 +62,25 @@ public class WebConfig implements WebMvcConfigurer {
         return vr;
     }
 
-    // 3) Локализация
     @Bean
     public LocaleResolver localeResolver() {
-        CookieLocaleResolver clr = new CookieLocaleResolver();
-        clr.setDefaultLocale(Locale.ENGLISH);
-        clr.setCookieName("lang");
-        return clr;
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(Locale.ENGLISH);
+        return slr;
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry reg) {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        reg.addInterceptor(lci);
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
     }
 
-    // 1) MessageSource для сообщений
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
@@ -89,7 +90,6 @@ public class WebConfig implements WebMvcConfigurer {
         return ms;
     }
 
-    // 2) Validator с той же messageSource
     @Bean
     public LocalValidatorFactoryBean validator() {
         LocalValidatorFactoryBean vb = new LocalValidatorFactoryBean();

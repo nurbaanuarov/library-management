@@ -24,9 +24,10 @@ public class RoleDAOImpl implements RoleDAO {
 
     @Override
     public Optional<Role> findByName(String name) {
+        Connection con = null;
         try {
-            Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(SELECT_BY_NAME);
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_BY_NAME);
 
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
@@ -41,15 +42,18 @@ public class RoleDAOImpl implements RoleDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying role by name: " + name, e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
     @Override
     public Set<Role> findAll() {
         Set<Role> roles = new HashSet<>();
+        Connection con = null;
         try {
-            Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -62,6 +66,8 @@ public class RoleDAOImpl implements RoleDAO {
             return roles;
         } catch (SQLException e) {
             throw new DataAccessException("Error querying all roles", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 }

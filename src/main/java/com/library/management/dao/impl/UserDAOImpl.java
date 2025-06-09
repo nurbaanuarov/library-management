@@ -20,9 +20,9 @@ public class UserDAOImpl implements UserDAO {
     private final DataSource dataSource;
 
     private static final String SELECT = "SELECT id, username, email, password_hash, enabled, created_at, last_modified FROM users";
-    private static final String BY_ID = "WHERE id = ?";
-    private static final String BY_USERNAME = "WHERE username = ?";
-    private static final String BY_EMAIL = "WHERE email = ?";
+    private static final String SELECT_BY_USERNAME = "SELECT id, username, email, password_hash, enabled, created_at, last_modified FROM users WHERE username = ?";
+    private static final String SELECT_BY_EMAIL = "SELECT id, username, email, password_hash, enabled, created_at, last_modified FROM users WHERE email = ?";
+    private static final String SELECT_BY_ID = "SELECT id, username, email, password_hash, enabled, created_at, last_modified FROM users WHERE id = ?";
 
     private static final String INSERT = "INSERT INTO users (username, email, password_hash, enabled, created_at, last_modified) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -30,9 +30,10 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Optional<User> findById(Long id) {
+        Connection con = null;
         try {
-            Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(SELECT + BY_ID);
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_BY_ID);
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
@@ -42,13 +43,15 @@ public class UserDAOImpl implements UserDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by id", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
         try {
-            return getUserByParameter(username, SELECT + BY_USERNAME);
+            return getUserByParameter(username, SELECT_BY_USERNAME);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by username", e);
         }
@@ -57,7 +60,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Optional<User> findByEmail(String email) {
         try {
-            return getUserByParameter(email, SELECT + BY_EMAIL);
+            return getUserByParameter(email, SELECT_BY_EMAIL);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by email", e);
         }
@@ -83,8 +86,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void save(User user) {
+        Connection con = null;
         try {
-            Connection con = DataSourceUtils.getConnection(dataSource);
+            con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, user.getUsername());
@@ -108,13 +112,16 @@ public class UserDAOImpl implements UserDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error saving user", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
     @Override
     public void update(User user) {
+        Connection con = null;
         try {
-            Connection con = DataSourceUtils.getConnection(dataSource);
+            con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(UPDATE);
             ps.setString(1, user.getEmail());
             ps.setString(2, user.getPasswordHash());
@@ -128,13 +135,16 @@ public class UserDAOImpl implements UserDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error updating user", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
     private Optional<User> getUserByParameter(String param, String sql) throws SQLException {
+        Connection con = null;
         try {
-            Connection conn = DataSourceUtils.getConnection(dataSource);
-            PreparedStatement ps = conn.prepareStatement(sql);
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, param);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
@@ -144,6 +154,8 @@ public class UserDAOImpl implements UserDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by parameter", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 
