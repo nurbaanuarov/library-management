@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class RegistrationForm {
     @NotBlank(message="Username is required")
-    @Size(min=3, max=50)
+    @Size(min=3, max=50, message = "Username length should be between 3 and 50")
     private String username;
 
     @NotBlank(message="Email is required")

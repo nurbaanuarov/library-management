@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/register")
@@ -29,17 +28,19 @@ public class RegistrationController {
     @PostMapping
     public String process(
             @Valid @ModelAttribute("regForm") RegistrationForm form,
-            BindingResult br,
-            RedirectAttributes flash
+            BindingResult br
     ) {
+        if (br.hasErrors()) {
+            return "register";
+        }
+
         try {
             regService.register(form);
             return "redirect:/login?registered";
         } catch (InputValidationException e) {
             br.reject("registration.failed", e.getMessage());
-            flash.addFlashAttribute("registrationError", e.getMessage());
-            flash.addFlashAttribute("regForm", form);
-            return "redirect:/register";
+            return "register";
         }
     }
+
 }
