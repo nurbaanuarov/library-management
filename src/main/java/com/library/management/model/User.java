@@ -9,9 +9,6 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Сущность пользователя.
- */
 @Builder
 @Data
 @NoArgsConstructor
