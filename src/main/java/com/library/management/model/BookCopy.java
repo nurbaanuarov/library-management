@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Сущность физического экземпляра книги.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

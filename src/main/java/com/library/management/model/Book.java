@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Сущность книги (произведения).
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

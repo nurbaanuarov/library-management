@@ -39,7 +39,7 @@ public class UserDAOImpl implements UserDAO {
                 if (!rs.next()) {
                     return Optional.empty();
                 }
-                return Optional.of(getUser(rs));
+                return Optional.of(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by id", e);
@@ -51,7 +51,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Optional<User> findByUsername(String username) {
         try {
-            return getUserByParameter(username, SELECT_BY_USERNAME);
+            return getByParameter(username, SELECT_BY_USERNAME);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by username", e);
         }
@@ -60,7 +60,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Optional<User> findByEmail(String email) {
         try {
-            return getUserByParameter(email, SELECT_BY_EMAIL);
+            return getByParameter(email, SELECT_BY_EMAIL);
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by email", e);
         }
@@ -75,7 +75,7 @@ public class UserDAOImpl implements UserDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                users.add(getUser(rs));
+                users.add(mapRow(rs));
             }
 
             return users;
@@ -140,7 +140,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    private Optional<User> getUserByParameter(String param, String sql) throws SQLException {
+    private Optional<User> getByParameter(String param, String sql) throws SQLException {
         Connection con = null;
         try {
             con = DataSourceUtils.getConnection(dataSource);
@@ -150,7 +150,7 @@ public class UserDAOImpl implements UserDAO {
                 if (!rs.next()) {
                     return Optional.empty();
                 }
-                return Optional.of(getUser(rs));
+                return Optional.of(mapRow(rs));
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error querying user by parameter", e);
@@ -159,7 +159,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    private User getUser(ResultSet rs) throws SQLException {
+    private User mapRow(ResultSet rs) throws SQLException {
         return User.builder()
                 .id(rs.getLong("id"))
                 .username(rs.getString("username"))

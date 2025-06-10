@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Сущность комментария к книге.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,4 +1,4 @@
-package com.library.management.controller;
+package com.library.management.controller.admin;
 
 import com.library.management.dto.RegistrationForm;
 import com.library.management.model.Role;
