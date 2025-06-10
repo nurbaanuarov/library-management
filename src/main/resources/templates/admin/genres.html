@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manage Genres</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+
+<header>
+    <a th:href="@{/admin}">Dashboard</a>
+    <a th:href="@{/admin/users}">Users</a>
+    <a th:href="@{/admin/authors}">Authors</a>
+    <a th:href="@{/admin/genres}">Genres</a>
+    <a th:href="@{/admin/books}">Books</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+    <h2>Genres</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="g : ${genres}">
+            <td th:text="${g.id}">1</td>
+            <td th:text="${g.name}">Fiction</td>
+            <td>
+                <form th:action="@{/admin/genres/delete}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${g.id}" />
+                    <button type="submit" class="btn danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(genres)}">
+            <td colspan="3" style="text-align: center;"><em>No genres found.</em></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Add New Genre</h3>
+    <form th:action="@{/admin/genres/new}" th:object="${genre}" method="post">
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" th:field="*{name}" required />
+        </div>
+        <button type="submit" class="btn">Add Genre</button>
+    </form>
+</div>
+</body>
+</html>
