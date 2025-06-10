@@ -2,45 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>All Authors</title>
+    <title>Manage Authors</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}" />
 </head>
 <body>
+
 <header>
     <a th:href="@{/admin}">Dashboard</a>
     <a th:href="@{/admin/users}">Users</a>
     <a th:href="@{/admin/authors}">Authors</a>
     <a th:href="@{/admin/genres}">Genres</a>
     <a th:href="@{/admin/books}">Books</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
 </header>
 
 <div class="container">
-    <h2 th:text="${pageTitle}">All Authors</h2>
-    <p>(Here you’d list all authors in a table.)</p>
+    <h2>Authors</h2>
+
     <table>
         <thead>
         <tr>
             <th>ID</th>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <!--
-        th:each="a : ${authors}"
-        <tr>
-          <td th:text="${a.id}">1</td>
-          <td th:text="${a.firstName}">Fyodor</td>
-          <td th:text="${a.lastName}">Dostoevsky</td>
-        </tr>
-        -->
-        <tr>
-            <td colspan="3" style="text-align:center; color:#7f8c8d;">
-                No data yet. Populate <code>authors</code> in your AdminController.
+        <tr th:each="a : ${authors}">
+            <td th:text="${a.id}">1</td>
+            <td th:text="${a.firstName}">John</td>
+            <td th:text="${a.lastName}">Doe</td>
+            <td>
+                <form th:action="@{/admin/authors/delete}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${a.id}" />
+                    <button type="submit" class="btn danger">Delete</button>
+                </form>
             </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(authors)}">
+            <td colspan="4" style="text-align: center;"><em>No authors found.</em></td>
         </tr>
         </tbody>
     </table>
+
+    <h3>Add New Author</h3>
+    <form th:action="@{/admin/authors/new}" th:object="${author}" method="post">
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" th:field="*{firstName}" required />
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" th:field="*{lastName}" required />
+        </div>
+        <button type="submit" class="btn">Add Author</button>
+    </form>
 </div>
 </body>
 </html>
