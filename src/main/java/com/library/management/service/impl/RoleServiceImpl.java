@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleDAO roleDAO;

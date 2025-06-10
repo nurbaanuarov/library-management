@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserDAO userDao;
@@ -44,7 +45,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void updateUser(User user, Set<Long> newRoleIds) {
         Set<String> currentRoleIds = userRoleDao.findByUserId(user.getId())
                 .stream()
@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void createUser(RegistrationForm form, Set<Long> roleIds) {
         registrationService.register(form);
 

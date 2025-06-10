@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
     private final UserDAO userDao;
@@ -24,7 +25,6 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final RoleDAO roleDao;
 
     @Override
-    @Transactional
     public void register(RegistrationForm form) {
         if (userDao.findByUsername(form.getUsername()).isPresent()) {
             throw new InputValidationException("Username already taken");
