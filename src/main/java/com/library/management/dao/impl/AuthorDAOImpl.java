@@ -28,9 +28,11 @@ public class AuthorDAOImpl implements AuthorDAO {
     @Override
     public List<Author> findAll() {
         List<Author> authors = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
+        Connection con = null;
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 authors.add(mapRow(rs));
@@ -38,6 +40,8 @@ public class AuthorDAOImpl implements AuthorDAO {
             return authors;
         } catch (SQLException e) {
             throw new DataAccessException("Error fetching all authors", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 

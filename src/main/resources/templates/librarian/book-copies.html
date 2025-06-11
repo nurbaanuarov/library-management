@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Book Copies</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<header>
+    <a th:href="@{/librarian}">Dashboard</a>
+    <a th:href="@{/librarian/books}">Books</a>
+    <a th:href="@{/librarian/copies}">Copies</a>
+    <a th:href="@{/librarian/requests}">Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+    <h2>Book Copies Inventory</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Book ID</th>
+            <th>Inventory #</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="copy : ${copies}">
+            <td th:text="${copy.id}">1</td>
+            <td th:text="${copy.book.id}">42</td>
+            <td th:text="${copy.inventoryNumber}">INV-001</td>
+            <td th:text="${copy.status}">AVAILABLE</td>
+            <td>
+                <!-- Change status only -->
+                <form th:action="@{|/librarian/copies/${copy.id}/status|}" method="post" style="display:inline">
+                    <select name="status">
+                        <option th:each="st: ${statuses}"
+                                th:value="${st}"
+                                th:text="${st}"
+                                th:selected="${st} == ${copy.status}">
+                        </option>
+                    </select>
+                    <button type="submit" class="btn">Update Status</button>
+                </form>
+
+                <!-- Edit inventory number & status together -->
+                <form th:action="@{/librarian/copies/update}" method="post" style="display:inline; margin-left:8px;">
+                    <input type="hidden" name="id" th:value="${copy.id}" />
+                    <input type="text" name="inventoryNumber"
+                           th:value="${copy.inventoryNumber}"
+                           style="width:100px;" required />
+                    <select name="status">
+                        <option th:each="st: ${statuses}" th:value="${st}" th:text="${st}"
+                                th:selected="${st} == ${copy.status}"></option>
+                    </select>
+                    <button type="submit" class="btn">Save</button>
+                </form>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(copies)}">
+            <td colspan="5" style="text-align:center; color:gray;">
+                <em>No copies found.</em>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

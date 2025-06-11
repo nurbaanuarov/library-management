@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Librarian Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<!-- Shared header -->
+<header>
+    <a th:href="@{/librarian}">Dashboard</a>
+    <a th:href="@{/librarian/books}">Books</a>
+    <a th:href="@{/librarian/copies}">Copies</a>
+    <a th:href="@{/librarian/requests}">Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+    <h2>Welcome, Librarian!</h2>
+    <p>Use the links above to manage books, copies, and reader requests.</p>
+</div>
+</body>
+</html>

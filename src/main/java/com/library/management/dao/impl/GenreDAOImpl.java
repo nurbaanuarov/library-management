@@ -28,9 +28,11 @@ public class GenreDAOImpl implements GenreDAO {
     @Override
     public List<Genre> findAll() {
         List<Genre> genres = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = con.prepareStatement(SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
+        Connection con = null;
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT_ALL);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 genres.add(mapRow(rs));
@@ -38,6 +40,8 @@ public class GenreDAOImpl implements GenreDAO {
             return genres;
         } catch (SQLException e) {
             throw new DataAccessException("Error fetching all genres", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 

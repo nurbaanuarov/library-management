@@ -1,0 +1,41 @@
+package com.library.management.service.impl;
+
+import com.library.management.dao.BookDAO;
+import com.library.management.exception.BookNotFoundException;
+import com.library.management.model.Book;
+import com.library.management.service.BookService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class BookServiceImpl implements BookService {
+    private final BookDAO bookDAO;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Book> findAll() {
+        return bookDAO.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Book findById(Long id) {
+        return bookDAO.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found with id " + id));
+    }
+
+    @Override
+    public void save(Book book) {
+        bookDAO.save(book);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        bookDAO.deleteById(id);
+    }
+}
