@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Manage Books</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{books.title}">Manage Books</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
-
 <header>
-    <a th:href="@{/admin}">Dashboard</a>
-    <a th:href="@{/admin/users}">Users</a>
-    <a th:href="@{/admin/authors}">Authors</a>
-    <a th:href="@{/admin/genres}">Genres</a>
-    <a th:href="@{/admin/books}">Books</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/admin}"                th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/users}"          th:text="#{header.users}">Users</a>
+    <a th:href="@{/admin/authors}"        th:text="#{header.authors}">Authors</a>
+    <a th:href="@{/admin/genres}"         th:text="#{header.genres}">Genres</a>
+    <a th:href="@{/admin/books}"          th:text="#{header.books}">Books</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"           th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"           th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"               th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Books</h2>
+    <h2 th:text="#{books.heading}">Books</h2>
 
-    <!-- Book List Table -->
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Genre</th>
-            <th>Total Copies</th>
-            <th>Actions</th>
+            <th th:text="#{books.table.id}">ID</th>
+            <th th:text="#{books.table.title}">Title</th>
+            <th th:text="#{books.table.author}">Author</th>
+            <th th:text="#{books.table.genre}">Genre</th>
+            <th th:text="#{books.table.totalCopies}">Total Copies</th>
+            <th th:text="#{books.table.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -36,62 +38,65 @@
             <td th:text="${b.id}">1</td>
             <td th:text="${b.title}">Book Title</td>
             <td>
-                <span th:each="a : ${authors}" th:if="${a.id == b.author.id}" th:text="${a.firstName + ' ' + a.lastName}">Author</span>
+            <span th:each="a : ${authors}"
+                  th:if="${a.id == b.author.id}"
+                  th:text="${a.firstName + ' ' + a.lastName}">Author</span>
             </td>
             <td>
-                <span th:each="g : ${genres}" th:if="${g.id == b.genre.id}" th:text="${g.name}">Genre</span>
+            <span th:each="g : ${genres}"
+                  th:if="${g.id == b.genre.id}"
+                  th:text="${g.name}">Genre</span>
             </td>
             <td th:text="${b.totalCopies}">3</td>
             <td>
                 <form th:action="@{/admin/books/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${b.id}" />
-                    <button type="submit" class="btn danger">Delete</button>
+                    <input type="hidden" name="id" th:value="${b.id}"/>
+                    <button type="submit" class="btn danger"
+                            th:text="#{books.table.actions.delete}">Delete</button>
                 </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(books)}">
-            <td colspan="6" style="text-align:center;"><em>No books available.</em></td>
+            <td colspan="6" style="text-align:center;">
+                <em th:text="#{books.empty}">No books available.</em>
+            </td>
         </tr>
         </tbody>
     </table>
 
-    <!-- Add Book Form -->
-    <h3>Add New Book</h3>
+    <h3 th:text="#{books.add.heading}">Add New Book</h3>
     <form th:action="@{/admin/books/new}" th:object="${book}" method="post">
         <div class="form-group">
-            <label>Title:</label>
-            <input type="text" th:field="*{title}" required />
+            <label th:text="#{books.add.title}">Title:</label>
+            <input type="text" th:field="*{title}" required/>
         </div>
-
         <div class="form-group">
-            <label>Description:</label>
+            <label th:text="#{books.add.description}">Description:</label>
             <textarea th:field="*{description}" rows="3"></textarea>
         </div>
-
         <div class="form-group">
-            <label>Author:</label>
+            <label th:text="#{books.add.author}">Author:</label>
             <select th:field="*{author.id}" required>
-                <option value="" disabled selected>Select an author</option>
-                <option th:each="a : ${authors}" th:value="${a.id}"
+                <option value="" disabled th:text="#{books.add.selectAuthor}">Select an author</option>
+                <option th:each="a : ${authors}"
+                        th:value="${a.id}"
                         th:text="${a.firstName + ' ' + a.lastName}">Author</option>
             </select>
         </div>
-
         <div class="form-group">
-            <label>Genre:</label>
+            <label th:text="#{books.add.genre}">Genre:</label>
             <select th:field="*{genre.id}" required>
-                <option value="" disabled selected>Select a genre</option>
-                <option th:each="g : ${genres}" th:value="${g.id}"
+                <option value="" disabled th:text="#{books.add.selectGenre}">Select a genre</option>
+                <option th:each="g : ${genres}"
+                        th:value="${g.id}"
                         th:text="${g.name}">Genre</option>
             </select>
         </div>
-
         <div class="form-group">
-            <label>Total Copies:</label>
-            <input type="number" min="1" th:field="*{totalCopies}" required />
+            <label th:text="#{books.add.totalCopies}">Total Copies:</label>
+            <input type="number" min="1" th:field="*{totalCopies}" required/>
         </div>
-
-        <button type="submit" class="btn">Add Book</button>
+        <button type="submit" class="btn" th:text="#{books.add.button}">Add Book</button>
     </form>
 </div>
 </body>

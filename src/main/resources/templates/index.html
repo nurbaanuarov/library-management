@@ -2,20 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Online Classroom</title>
+    <title th:text="#{index.title}">Online Classroom</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="container">
+    <div style="text-align:right; margin-bottom:1rem;">
+        <a th:text="#{language.english}" th:href="@{?lang='en'}">🇬🇧 English</a> |
+        <a th:text="#{language.russian}" th:href="@{?lang='ru'}">🇷🇺 Russian</a>
+    </div>
+
     <header>
-        <h1>Welcome to the Library</h1>
-        <p class="center-text">
+        <h1 th:text="#{index.welcome}">Welcome to the Library</h1>
+        <p class="center-text" th:text="#{index.description}">
             Manage your courses and track progress—all in one place.
         </p>
     </header>
 
     <main>
-        <a class="btn" th:href="@{/login}">Log In</a>
+        <a class="btn" th:href="@{/login}" th:text="#{index.login}">Log In</a>
     </main>
 </div>
 </body>

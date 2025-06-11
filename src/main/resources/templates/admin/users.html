@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>All Users</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{users.title}">All Users</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
-
-<!-- Top Nav Bar (shared) -->
 <header>
-    <a th:href="@{/admin}">Dashboard</a>
-    <a th:href="@{/admin/users}">Users</a>
-    <a th:href="@{/admin/authors}">Authors</a>
-    <a th:href="@{/admin/genres}">Genres</a>
-    <a th:href="@{/admin/books}">Books</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/admin}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/users}"         th:text="#{header.users}">Users</a>
+    <a th:href="@{/admin/authors}"       th:text="#{header.authors}">Authors</a>
+    <a th:href="@{/admin/genres}"        th:text="#{header.genres}">Genres</a>
+    <a th:href="@{/admin/books}"         th:text="#{header.books}">Books</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>All Users</h2>
-    <p class="welcome">Click “Edit” to modify a user’s role / enabled status.</p>
+    <h2 th:text="#{users.heading}">All Users</h2>
+    <p class="welcome" th:text="#{users.welcome}">
+        Click “Edit” to modify a user’s role / enabled status.
+    </p>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Roles</th>
-            <th>Enabled</th>
-            <th>Actions</th>
+            <th th:text="#{users.table.id}">ID</th>
+            <th th:text="#{users.table.username}">Username</th>
+            <th th:text="#{users.table.email}">Email</th>
+            <th th:text="#{users.table.roles}">Roles</th>
+            <th th:text="#{users.table.enabled}">Enabled</th>
+            <th th:text="#{users.table.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -38,62 +42,58 @@
             <td th:text="${u.username}">john</td>
             <td th:text="${u.email}">john@example.com</td>
             <td>
-            <span th:each="r, iterStat : ${u.roles}"
-                  th:text="${r.name + (iterStat.last ? '' : ', ')}"></span>
-            <td th:text="${u.enabled ? 'YES' : 'NO'}">YES</td>
+            <span th:each="r,st: ${u.roles}"
+                  th:text="${r.name + (st.last? '' : ', ')}">ROLE</span>
+            </td>
+            <td th:text="${u.enabled? #{users.enabled.yes} : #{users.enabled.no}}">YES</td>
             <td>
-                <a th:href="@{'/admin/users/' + ${u.id}}">Edit</a>
+                <a th:href="@{'/admin/users/' + ${u.id}}"
+                   th:text="#{users.table.actions.edit}">Edit</a>
             </td>
         </tr>
-        <!-- If no users exist, optionally show a “no data” row -->
         <tr th:if="${#lists.isEmpty(users)}">
-            <td colspan="6" style="text-align: center; color: #7f8c8d;">
-                <em>No users found.</em>
+            <td colspan="6" style="text-align:center; color:#7f8c8d;">
+                <em th:text="#{users.empty}">No users found.</em>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <h3>Add New User</h3>
-    <!--/*@thymesVar id="userCreationError" type="java.lang.String"*/-->
+    <h3 th:text="#{users.add.heading}">Add New User</h3>
     <div th:if="${userCreationError}" class="error">
         <p th:text="${userCreationError}">User creation failed.</p>
     </div>
 
-    <form th:action="@{/admin/users/new}" th:object="${form}" method="post">
+    <form th:action="@{/admin/users/new}"
+          th:object="${form}"
+          method="post">
         <div class="form-group">
-            <label>Username:</label>
-            <input type="text" th:field="*{username}" required />
+            <label th:text="#{users.add.username}">Username</label>
+            <input type="text" th:field="*{username}" required/>
         </div>
-
         <div class="form-group">
-            <label>Email:</label>
-            <input type="email" th:field="*{email}" required />
+            <label th:text="#{users.add.email}">Email</label>
+            <input type="email" th:field="*{email}" required/>
         </div>
-
         <div class="form-group">
-            <label>Password:</label>
-            <input type="password" th:field="*{password}" required />
+            <label th:text="#{users.add.password}">Password</label>
+            <input type="password" th:field="*{password}" required/>
         </div>
-
         <div class="form-group">
-            <label>Repeat password:</label>
-            <input type="password" th:field="*{confirmPassword}" required />
+            <label th:text="#{users.add.confirmPassword}">Repeat password</label>
+            <input type="password" th:field="*{confirmPassword}" required/>
         </div>
-
         <div class="form-group">
-            <label>Roles:</label>
+            <label th:text="#{users.add.roles}">Roles</label>
             <div th:each="r : ${allRoles}">
                 <label>
-                    <input type="checkbox" name="roles" th:value="${r.id}" />
+                    <input type="checkbox" name="roles" th:value="${r.id}"/>
                     <span th:text="${r.name}">ROLE_NAME</span>
                 </label>
             </div>
         </div>
-
-        <button type="submit" class="btn">Add User</button>
+        <button type="submit" class="btn" th:text="#{users.add.button}">Add User</button>
     </form>
-
 </div>
 </body>
 </html>

@@ -1,70 +1,70 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title th:text="'Edit User: ' + ${user.username}">Edit User</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{users.edit.title(${user.username})}">Edit User</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
-
-<!-- Top Nav Bar (shared) -->
 <header>
-    <a th:href="@{/admin}">Dashboard</a>
-    <a th:href="@{/admin/users}">Users</a>
-    <a th:href="@{/admin/authors}">Authors</a>
-    <a th:href="@{/admin/genres}">Genres</a>
-    <a th:href="@{/admin/books}">Books</a>
+    <a th:href="@{/admin}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/users}"         th:text="#{header.users}">Users</a>
+    <a th:href="@{/admin/authors}"       th:text="#{header.authors}">Authors</a>
+    <a th:href="@{/admin/genres}"        th:text="#{header.genres}">Genres</a>
+    <a th:href="@{/admin/books}"         th:text="#{header.books}">Books</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2 th:text="'Edit User ID ' + ${user.id} + ': ' + ${user.username}">Edit User</h2>
+    <h2 th:text="#{users.edit.heading(${user.id}, ${user.username})}">
+        Edit User ID 1: john
+    </h2>
 
     <form th:action="@{|/admin/users/${user.id}|}" method="post">
-
         <div class="form-group">
-            <label>Username:</label>
-            <p th:text="${user.username}" class="form-control-static"></p>
+            <label th:text="#{users.edit.username.label}">Username:</label>
+            <p th:text="${user.username}" class="form-control-static">john</p>
         </div>
 
         <div class="form-group">
-            <label>Email:</label>
-            <p th:text="${user.email}" class="form-control-static"></p>
+            <label th:text="#{users.edit.email.label}">Email:</label>
+            <p th:text="${user.email}" class="form-control-static">john@example.com</p>
         </div>
 
-        <!-- Enabled checkbox -->
         <div class="form-group">
             <label>
                 <input type="checkbox" name="enabled"
                        th:checked="${user.enabled}"
-                       th:disabled="${isAdminUser}" />
-                Enabled
+                       th:disabled="${isAdminUser}"/>
+                <span th:text="#{users.edit.enabled.label}">Enabled</span>
             </label>
         </div>
 
-        <!-- Roles -->
         <div class="form-group">
-            <label>Roles:</label>
+            <label th:text="#{users.edit.roles.label}">Roles:</label>
             <div th:each="r : ${allRoles}">
-                <label style="margin-right: 16px;">
+                <label style="margin-right:16px;">
                     <input type="checkbox"
                            name="roles"
                            th:value="${r.id}"
                            th:checked="${userRoleIds.contains(r.id)}"
-                           th:disabled="${isAdminUser}" />
+                           th:disabled="${isAdminUser}"/>
                     <span th:text="${r.name}">ROLE_NAME</span>
                 </label>
             </div>
         </div>
 
-        <!-- Submit button (hidden for admin users) -->
-        <button type="submit" class="btn" th:if="${!isAdminUser}">
-            Save Changes
-        </button>
+        <button type="submit" class="btn"
+                th:if="${!isAdminUser}"
+                th:text="#{users.edit.save.button}">Save Changes</button>
 
-        <a th:href="@{/admin/users}" class="btn"
-           style="background-color: #bdc3c7; margin-left: 8px; color: #2c3e50;">
-            Cancel
-        </a>
+        <a th:href="@{/admin/users}"
+           class="btn secondary"
+           th:text="#{users.edit.cancel.button}">Cancel</a>
     </form>
 </div>
 </body>

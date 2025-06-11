@@ -7,6 +7,11 @@
 </head>
 <body>
 <div class="container">
+    <div style="text-align:right; margin-bottom:1rem;">
+        <a th:text="#{language.english}" th:href="@{/login(lang='en')}">🇬🇧 English</a> |
+        <a th:text="#{language.russian}" th:href="@{/login(lang='ru')}">🇷🇺 Russian</a>
+    </div>
+
     <h2 th:text="#{login.title}">Login</h2>
     <form th:action="@{/do-login}"
           th:object="${loginForm}"
@@ -14,26 +19,16 @@
 
         <div class="form-group">
             <label th:for="*{username}" th:text="#{login.username}">Username</label>
-            <input id="username"
-                   type="text"
-                   th:field="*{username}"
-                   class="form-control"
-                   required />
+            <input id="username" type="text" th:field="*{username}" required />
             <div th:if="${#fields.hasErrors('username')}"
-                 th:errors="*{username}"
-                 class="error"></div>
+                 th:errors="*{username}" class="error"></div>
         </div>
 
         <div class="form-group">
             <label th:for="*{password}" th:text="#{login.password}">Password</label>
-            <input id="password"
-                   type="password"
-                   th:field="*{password}"
-                   class="form-control"
-                   required />
+            <input id="password" type="password" th:field="*{password}" required />
             <div th:if="${#fields.hasErrors('password')}"
-                 th:errors="*{password}"
-                 class="error"></div>
+                 th:errors="*{password}" class="error"></div>
         </div>
 
         <div class="error" th:if="${param.error}" th:text="#{login.error}">

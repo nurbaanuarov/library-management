@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Manage Genres</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{genres.title}">Manage Genres</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
-
 <header>
-    <a th:href="@{/admin}">Dashboard</a>
-    <a th:href="@{/admin/users}">Users</a>
-    <a th:href="@{/admin/authors}">Authors</a>
-    <a th:href="@{/admin/genres}">Genres</a>
-    <a th:href="@{/admin/books}">Books</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/admin}"                th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/users}"          th:text="#{header.users}">Users</a>
+    <a th:href="@{/admin/authors}"        th:text="#{header.authors}">Authors</a>
+    <a th:href="@{/admin/genres}"         th:text="#{header.genres}">Genres</a>
+    <a th:href="@{/admin/books}"          th:text="#{header.books}">Books</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"           th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"           th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"               th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Genres</h2>
+    <h2 th:text="#{genres.heading}">Genres</h2>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Actions</th>
+            <th th:text="#{genres.table.id}">ID</th>
+            <th th:text="#{genres.table.name}">Name</th>
+            <th th:text="#{genres.table.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -33,24 +36,27 @@
             <td th:text="${g.name}">Fiction</td>
             <td>
                 <form th:action="@{/admin/genres/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${g.id}" />
-                    <button type="submit" class="btn danger">Delete</button>
+                    <input type="hidden" name="id" th:value="${g.id}"/>
+                    <button type="submit" class="btn danger"
+                            th:text="#{genres.table.actions.delete}">Delete</button>
                 </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(genres)}">
-            <td colspan="3" style="text-align: center;"><em>No genres found.</em></td>
+            <td colspan="3" style="text-align:center;">
+                <em th:text="#{genres.empty}">No genres found.</em>
+            </td>
         </tr>
         </tbody>
     </table>
 
-    <h3>Add New Genre</h3>
+    <h3 th:text="#{genres.add.heading}">Add New Genre</h3>
     <form th:action="@{/admin/genres/new}" th:object="${genre}" method="post">
         <div class="form-group">
-            <label>Name:</label>
-            <input type="text" th:field="*{name}" required />
+            <label th:text="#{genres.add.name}">Name:</label>
+            <input type="text" th:field="*{name}" required/>
         </div>
-        <button type="submit" class="btn">Add Genre</button>
+        <button type="submit" class="btn" th:text="#{genres.add.button}">Add Genre</button>
     </form>
 </div>
 </body>

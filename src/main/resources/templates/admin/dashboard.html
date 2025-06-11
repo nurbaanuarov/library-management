@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Admin Dashboard</title>
-
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{admin.dashboard.title}">Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
 <header>
-    <a th:href="@{/admin}">Dashboard</a>
-    <a th:href="@{/admin/users}">Users</a>
-    <a th:href="@{/admin/authors}">Authors</a>
-    <a th:href="@{/admin/genres}">Genres</a>
-    <a th:href="@{/admin/books}">Books</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/admin}" th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/users}" th:text="#{header.users}">Users</a>
+    <a th:href="@{/admin/authors}" th:text="#{header.authors}">Authors</a>
+    <a th:href="@{/admin/genres}" th:text="#{header.genres}">Genres</a>
+    <a th:href="@{/admin/books}" th:text="#{header.books}">Books</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}" th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}" th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}" th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Admin Dashboard</h2>
-    <p class="welcome">
+    <h2 th:text="#{admin.dashboard.title}">Admin Dashboard</h2>
+    <p class="welcome" th:text="#{admin.dashboard.welcome}">
         Welcome to the Admin page! From here, you can manage users, authors, and books.
     </p>
     <!-- More dashboard content here… -->
