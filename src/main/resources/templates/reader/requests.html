@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"/><title>My Requests</title></head>
+<head>
+    <meta charset="UTF-8"/>
+    <title>My Requests</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
 <body>
-<h2>My Book Requests</h2>
+<header>
+    <a th:href="@{/reader}">Dashboard</a>
+    <a th:href="@{/reader/books}">Books</a>
+    <a th:href="@{/reader/requests}">My Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
 <table>
     <tr><th>ID</th><th>Book</th><th>Type</th><th>Status</th><th>Action</th></tr>
     <tr th:each="r: ${requests}">

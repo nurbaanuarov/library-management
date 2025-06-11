@@ -1,4 +1,4 @@
-package com.library.management.controller;
+package com.library.management.controller.reader;
 
 import com.library.management.model.Book;
 import com.library.management.model.BookRequest;
@@ -28,6 +28,11 @@ public class ReaderController {
     private final UserService userService;
     private final BookCopyService bookCopyService;
 
+    @GetMapping
+    public String dashboard() {
+        return "reader/dashboard";
+    }
+
     @GetMapping("/books")
     public String listBooks(Model model) {
         List<Book> books = bookService.findAll();
@@ -47,8 +52,11 @@ public class ReaderController {
     @GetMapping("/books/{id}")
     public String showBook(@PathVariable Long id, Model m) {
         Book b = bookService.findById(id);
+        boolean hasAvailable = bookService.hasAvailableCopies(id);
+
         m.addAttribute("book", b);
         m.addAttribute("types", RequestType.values());
+        m.addAttribute("hasAvailable", hasAvailable);
         return "reader/book-detail";
     }
 

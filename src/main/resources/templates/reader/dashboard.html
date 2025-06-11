@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Reader Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<!-- Shared header -->
+<header>
+    <a th:href="@{/reader}">Dashboard</a>
+    <a th:href="@{/reader/books}">Books</a>
+    <a th:href="@{/reader/requests}">My Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+    <h2>Welcome, Reader!</h2>
+    <p>Use the links above to browse books, place or view your requests.</p>
+</div>
+</body>
+</html>

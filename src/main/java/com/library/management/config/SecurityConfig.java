@@ -42,7 +42,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/register")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/librarian/**")).hasRole("LIBRARIAN")
-                        .requestMatchers(new AntPathRequestMatcher("/books/**")).hasAnyRole("READER","LIBRARIAN","ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/reader/**")).hasAnyRole("READER","LIBRARIAN","ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
