@@ -2,40 +2,52 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="${book.title}">Book</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title th:text="#{reader.book.title}">Book Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <header>
-    <a th:href="@{/reader}">Dashboard</a>
-    <a th:href="@{/reader/books}">Books</a>
-    <a th:href="@{/reader/requests}">My Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/reader}"              th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/reader/books}"        th:text="#{header.books}">Books</a>
+    <a th:href="@{/reader/requests}"     th:text="#{header.requests}">My Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
     <h2 th:text="${book.title}">Book Title</h2>
-    <p><strong>Author:</strong>
-        <span th:text="${book.author.firstName + ' ' + book.author.lastName}">Author Name</span>
-    </p>
-    <p><strong>Description:</strong>
-        <span th:text="${book.description}">Book description here...</span>
+
+    <p>
+        <strong th:text="#{reader.book.author}">Author:</strong>
+        <span th:text="${book.author.firstName + ' ' + book.author.lastName}"/>
     </p>
 
-    <h3>Request this Book</h3>
+    <p>
+        <strong th:text="#{reader.book.description}">Description:</strong>
+        <span th:text="${book.description}"/>
+    </p>
+
+    <h3 th:text="#{reader.book.request}">Request this Book</h3>
     <form th:if="${hasAvailable}"
-          th:action="@{'/reader/books/' + ${book.id} + '/request'}" method="post">
+          th:action="@{'/reader/books/' + ${book.id} + '/request'}"
+          method="post">
         <select name="type">
             <option th:each="t : ${types}" th:value="${t}" th:text="${t}">HOME</option>
         </select>
-        <button type="submit" class="btn">Submit Request</button>
+        <button type="submit" class="btn"
+                th:text="#{reader.book.request.button}">Submit Request</button>
     </form>
 
-    <p th:unless="${hasAvailable}" style="color:red;">
-        <em>All copies are currently lent out.</em>
+    <p th:unless="${hasAvailable}" style="color:red;"
+       th:text="#{reader.book.unavailable}">
+        All copies are currently lent out.
     </p>
 
-    <a th:href="@{/reader/books}">← Back to list</a>
+    <a th:href="@{/reader/books}" class="btn secondary"
+       th:text="#{reader.book.back}">← Back to list</a>
 </div>
 </body>
 </html>

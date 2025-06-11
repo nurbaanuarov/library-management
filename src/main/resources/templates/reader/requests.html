@@ -2,32 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>My Requests</title>
+    <title th:text="#{reader.requests.title}">My Requests</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 <header>
-    <a th:href="@{/reader}">Dashboard</a>
-    <a th:href="@{/reader/books}">Books</a>
-    <a th:href="@{/reader/requests}">My Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/reader}"              th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/reader/books}"        th:text="#{header.books}">Books</a>
+    <a th:href="@{/reader/requests}"     th:text="#{header.requests}">My Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
-<table>
-    <tr><th>ID</th><th>Book</th><th>Type</th><th>Status</th><th>Action</th></tr>
-    <tr th:each="r: ${requests}">
-        <td th:text="${r.id}"></td>
-        <td th:text="${r.copy != null ? r.copy.book.title : '—'}"></td>
-        <td th:text="${r.type}"></td>
-        <td th:text="${r.status}"></td>
-        <td>
-            <form th:if="${r.status.name() == 'PENDING'}"
-                  th:action="@{'/reader/requests/' + ${r.id} + '/cancel'}" method="post">
-                <button type="submit">Cancel</button>
-            </form>
-        </td>
-    </tr>
-</table>
-<a th:href="@{/reader/books}">Browse more books</a>
+<div class="container">
+    <h2 th:text="#{reader.requests.heading}">My Book Requests</h2>
+    <table>
+        <thead>
+        <tr>
+            <th th:text="#{reader.requests.table.id}">ID</th>
+            <th th:text="#{reader.requests.table.book}">Book</th>
+            <th th:text="#{reader.requests.table.type}">Type</th>
+            <th th:text="#{reader.requests.table.status}">Status</th>
+            <th th:text="#{reader.requests.table.action}">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="r : ${requests}">
+            <td th:text="${r.id}">1</td>
+            <td th:text="${r.copy != null ? r.copy.book.title : '—'}">—</td>
+            <td th:text="${r.type}">HOME</td>
+            <td th:text="${r.status}">PENDING</td>
+            <td>
+                <form th:if="${r.status.name() == 'PENDING'}"
+                      th:action="@{'/reader/requests/' + ${r.id} + '/cancel'}"
+                      method="post">
+                    <button type="submit" class="btn"
+                            th:text="#{reader.requests.button.cancel}">Cancel</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(requests)}">
+            <td colspan="5" style="text-align:center; color:gray;">
+                <em th:text="#{reader.requests.empty}">No requests found.</em>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/reader/books}" class="btn"
+       th:text="#{reader.requests.link.browse}">Browse more books</a>
+</div>
 </body>
 </html>

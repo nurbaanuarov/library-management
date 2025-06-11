@@ -2,30 +2,49 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Browse Books</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title th:text="#{reader.books.title}">Browse Books</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <header>
-    <a th:href="@{/reader}">Dashboard</a>
-    <a th:href="@{/reader/books}">Books</a>
-    <a th:href="@{/reader/requests}">My Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/reader}"              th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/reader/books}"        th:text="#{header.books}">Books</a>
+    <a th:href="@{/reader/requests}"     th:text="#{header.requests}">My Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
-<table>
-    <tr th:each="b : ${books}">
-        <td th:text="${b.title}"></td>
-        <td>
-      <span th:if="${availability[b.id]}">
-        <a th:href="@{'/reader/books/' + ${b.id}}">Request</a>
-      </span>
-            <span th:unless="${availability[b.id]}" style="color:gray;">
-        No copies available
-      </span>
-        </td>
-    </tr>
-</table>
+<div class="container">
+    <h2 th:text="#{reader.books.heading}">Available Books</h2>
 
+    <table>
+        <thead>
+        <tr>
+            <th th:text="#{reader.books.table.title}">Title</th>
+            <th th:text="#{reader.books.table.availability}">Availability</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${books}">
+            <td th:text="${b.title}">Book Title</td>
+            <td>
+            <span th:if="${availability[b.id]}">
+              <a th:href="@{'/reader/books/' + ${b.id}}"
+                 th:text="#{reader.books.link.request}">Request</a>
+            </span>
+                <span th:unless="${availability[b.id]}" style="color:gray;"
+                      th:text="#{reader.books.unavailable}">No copies available</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(books)}">
+            <td colspan="2" style="text-align:center; color:gray;"
+                th:text="#{reader.books.empty}">No books found.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

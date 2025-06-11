@@ -2,21 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Reader Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <title th:text="#{reader.dashboard.title}">Reader Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 <!-- Shared header -->
 <header>
-    <a th:href="@{/reader}">Dashboard</a>
-    <a th:href="@{/reader/books}">Books</a>
-    <a th:href="@{/reader/requests}">My Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/reader}"              th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/reader/books}"        th:text="#{header.books}">Books</a>
+    <a th:href="@{/reader/requests}"     th:text="#{header.requests}">My Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Welcome, Reader!</h2>
-    <p>Use the links above to browse books, place or view your requests.</p>
+    <h2 th:text="#{reader.dashboard.heading}">Welcome, Reader!</h2>
+    <p th:text="#{reader.dashboard.instructions}">
+        Use the links above to browse books, place or view your requests.
+    </p>
 </div>
 </body>
 </html>
