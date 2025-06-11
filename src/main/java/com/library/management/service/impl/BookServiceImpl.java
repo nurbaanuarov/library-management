@@ -1,8 +1,10 @@
 package com.library.management.service.impl;
 
+import com.library.management.dao.BookCopyDAO;
 import com.library.management.dao.BookDAO;
 import com.library.management.exception.BookNotFoundException;
 import com.library.management.model.Book;
+import com.library.management.model.CopyStatus;
 import com.library.management.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+    private final BookCopyDAO copyDao;
     private final BookDAO bookDAO;
 
     @Override
@@ -27,6 +30,13 @@ public class BookServiceImpl implements BookService {
     public Book findById(Long id) {
         return bookDAO.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id " + id));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasAvailableCopies(Long bookId) {
+        return copyDao.findByBookId(bookId).stream()
+                .anyMatch(c -> c.getStatus() == CopyStatus.AVAILABLE);
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.library.management.controller;
 
 import com.library.management.model.Book;
 import com.library.management.model.BookRequest;
+import com.library.management.model.CopyStatus;
 import com.library.management.model.RequestType;
+import com.library.management.service.BookCopyService;
 import com.library.management.service.BookService;
 import com.library.management.service.ReaderRequestService;
 import com.library.management.service.UserService;
@@ -13,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/reader")
@@ -22,15 +26,24 @@ public class ReaderController {
     private final BookService bookService;
     private final ReaderRequestService reqService;
     private final UserService userService;
+    private final BookCopyService bookCopyService;
 
-    // Browse all books
     @GetMapping("/books")
     public String listBooks(Model model) {
-        model.addAttribute("books", bookService.findAll());
+        List<Book> books = bookService.findAll();
+        Map<Long, Boolean> availability = books.stream()
+                .collect(Collectors.toMap(
+                        Book::getId,
+                        b -> bookCopyService.findByBookId(b.getId())
+                                .stream()
+                                .anyMatch(c -> c.getStatus() == CopyStatus.AVAILABLE)
+                ));
+        model.addAttribute("books", books);
+        model.addAttribute("availability", availability);
         return "reader/books";
     }
 
-    // Book detail + request form
+
     @GetMapping("/books/{id}")
     public String showBook(@PathVariable Long id, Model m) {
         Book b = bookService.findById(id);
@@ -39,7 +52,6 @@ public class ReaderController {
         return "reader/book-detail";
     }
 
-    // Submit a request
     @PostMapping("/books/{id}/request")
     public String placeRequest(@PathVariable Long id,
                                @RequestParam RequestType type,
@@ -49,7 +61,6 @@ public class ReaderController {
         return "redirect:/reader/requests";
     }
 
-    // View & cancel own requests
     @GetMapping("/requests")
     public String myRequests(Model m, Authentication auth) {
         Long userId = userService.findByUsername(auth.getName()).getId();

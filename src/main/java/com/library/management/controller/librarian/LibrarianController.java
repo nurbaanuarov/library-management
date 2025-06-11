@@ -2,7 +2,7 @@ package com.library.management.controller.librarian;
 
 import com.library.management.model.BookCopy;
 import com.library.management.model.CopyStatus;
-import com.library.management.service.LibrarianCopyService;
+import com.library.management.service.BookCopyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LibrarianController {
 
-    private final LibrarianCopyService copyService;
+    private final BookCopyService copyService;
 
     @GetMapping
     public String listCopies(Model model) {

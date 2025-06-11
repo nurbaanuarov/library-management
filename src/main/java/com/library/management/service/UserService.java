@@ -8,6 +8,7 @@ import java.util.Set;
 public interface UserService {
     List<User> findAll();
     User findById(long id);
+    User findByUsername(String username);
     void updateUser(User user, Set<Long> newRoleIds);
     void createUser(RegistrationForm user, Set<Long> newRoleIds);
 }

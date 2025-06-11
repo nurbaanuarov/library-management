@@ -37,6 +37,14 @@ public class UserServiceImpl implements UserService {
         return userDao.findById(id).map(userMapping())
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userDao.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+    }
+
     @Override
     public void updateUser(User user, Set<Long> newRoleIds) {
         Set<String> currentRoleIds = userRoleDao.findByUserId(user.getId())

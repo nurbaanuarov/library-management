@@ -4,7 +4,7 @@ import com.library.management.dao.BookCopyDAO;
 import com.library.management.exception.BookCopyNotFoundException;
 import com.library.management.model.BookCopy;
 import com.library.management.model.CopyStatus;
-import com.library.management.service.LibrarianCopyService;
+import com.library.management.service.BookCopyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class LibrarianCopyServiceImpl implements LibrarianCopyService {
+public class BookCopyServiceImpl implements BookCopyService {
     private final BookCopyDAO bookCopyDAO;
 
     @Override

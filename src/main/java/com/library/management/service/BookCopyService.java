@@ -5,7 +5,7 @@ import com.library.management.model.CopyStatus;
 
 import java.util.List;
 
-public interface LibrarianCopyService {
+public interface BookCopyService {
     List<BookCopy> findAll();
     List<BookCopy> findByBookId(Long bookId);
     BookCopy findById(Long id);

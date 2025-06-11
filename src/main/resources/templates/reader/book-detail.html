@@ -7,13 +7,15 @@
 <p><strong>Description:</strong> <span th:text="${book.description}"/></p>
 
 <h3>Request this Book</h3>
-<form th:action="@{'/reader/books/' + ${book.id} + '/request'}" method="post">
+<form th:if="${bookService.hasAvailableCopies(book.id)}"
+      th:action="@{'/reader/books/' + ${book.id} + '/request'}" method="post">
     <select name="type">
         <option th:each="t: ${types}" th:value="${t}" th:text="${t}"></option>
     </select>
     <button type="submit">Submit Request</button>
 </form>
-
+<p th:unless="${bookService.hasAvailableCopies(book.id)}"
+   style="color:red;"><em>All copies are currently lent out.</em></p>
 <a th:href="@{/reader/books}">← Back to list</a>
 </body>
 </html>

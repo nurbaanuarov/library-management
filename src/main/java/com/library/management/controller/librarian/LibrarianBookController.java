@@ -3,7 +3,7 @@ package com.library.management.controller.librarian;
 import com.library.management.model.Book;
 import com.library.management.model.BookCopy;
 import com.library.management.service.BookService;
-import com.library.management.service.LibrarianCopyService;
+import com.library.management.service.BookCopyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +17,7 @@ import java.util.List;
 public class LibrarianBookController {
 
     private final BookService bookService;
-    private final LibrarianCopyService copyService;
+    private final BookCopyService copyService;
 
     @GetMapping
     public String listBooks(Model model) {

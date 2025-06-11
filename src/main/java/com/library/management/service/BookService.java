@@ -7,6 +7,7 @@ import java.util.List;
 public interface BookService {
     List<Book> findAll();
     Book findById(Long id);
+    boolean hasAvailableCopies(Long bookId);
     void save(Book book);
     void deleteById(Long id);
 }

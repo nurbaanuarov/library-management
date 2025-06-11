@@ -1,17 +1,14 @@
 package com.library.management.service.impl;
 
 import com.library.management.dao.BookRequestDAO;
-import com.library.management.dao.BookDAO;
-import com.library.management.dao.UserDAO;
-import com.library.management.exception.BookNotFoundException;
 import com.library.management.exception.BookRequestNotFoundException;
-import com.library.management.exception.UserNotFoundException;
-import com.library.management.model.Book;
 import com.library.management.model.BookRequest;
 import com.library.management.model.RequestStatus;
 import com.library.management.model.RequestType;
 import com.library.management.model.User;
+import com.library.management.service.BookService;
 import com.library.management.service.ReaderRequestService;
+import com.library.management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +22,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReaderRequestServiceImpl implements ReaderRequestService {
 
+    private final UserService userService;
     private final BookRequestDAO requestDAO;
-    private final UserDAO userDAO;
-    private final BookDAO bookDAO;
+    private final BookService bookService;
 
     @Override
     public void createRequest(Long userId, Long bookId, RequestType type) {
-        User user = userDAO.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        Book book = bookDAO.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException("Book not found"));
+        User user = userService.findById(userId);
+
+        bookService.findById(bookId);
+
+        if (!bookService.hasAvailableCopies(bookId)) {
+            throw new IllegalStateException("No available copies for book id=" + bookId);
+        }
 
         BookRequest req = BookRequest.builder()
                 .user(user)
