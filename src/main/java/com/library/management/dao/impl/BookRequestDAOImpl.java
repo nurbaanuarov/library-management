@@ -81,20 +81,28 @@ public class BookRequestDAOImpl implements BookRequestDAO {
             con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, request.getUser().getId());
-            ps.setLong(2, request.getCopy().getId());
+            if (request.getCopy() != null) {
+                ps.setLong(2, request.getCopy().getId());
+            } else {
+                ps.setNull(2, Types.BIGINT);
+            }
             ps.setString(3, request.getType().name());
             ps.setString(4, request.getStatus().name());
             ps.setTimestamp(5, Timestamp.valueOf(request.getRequestDate()));
-            ps.setTimestamp(6, Timestamp.valueOf(request.getIssueDate()));
-            ps.setTimestamp(7, Timestamp.valueOf(request.getReturnDate()));
-
+            if (request.getIssueDate() != null) {
+                ps.setTimestamp(6, Timestamp.valueOf(request.getIssueDate()));
+            } else {
+                ps.setNull(6, Types.TIMESTAMP);
+            }
+            if (request.getReturnDate() != null) {
+                ps.setTimestamp(7, Timestamp.valueOf(request.getReturnDate()));
+            } else {
+                ps.setNull(7, Types.TIMESTAMP);
+            }
             int rows = ps.executeUpdate();
-            if (rows == 0) throw new DataAccessException("Inserting request failed");
-
+            if (rows == 0) throw new DataAccessException("Creating request failed, no rows affected");
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
-                    request.setId(keys.getLong(1));
-                }
+                if (keys.next()) request.setId(keys.getLong(1));
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error saving book request", e);
@@ -102,6 +110,7 @@ public class BookRequestDAOImpl implements BookRequestDAO {
             DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
+
 
     @Override
     public void update(BookRequest request) {
