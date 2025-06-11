@@ -2,29 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>All Book Copies</title>
+    <title th:text="#{librarian.copies.title}">All Book Copies</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}" />
 </head>
 <body>
 <header>
-    <a th:href="@{/librarian}">Dashboard</a>
-    <a th:href="@{/librarian/books}">Books</a>
-    <a th:href="@{/librarian/copies}">Copies</a>
-    <a th:href="@{/librarian/requests}">Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/librarian}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}"         th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"        th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}"      th:text="#{header.requests}">Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"              th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"              th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"                  th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Book Copies Inventory</h2>
+    <h2 th:text="#{librarian.copies.heading}">Book Copies Inventory</h2>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Book ID</th>
-            <th>Inventory #</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th th:text="#{librarian.copies.table.id}">ID</th>
+            <th th:text="#{librarian.copies.table.bookId}">Book ID</th>
+            <th th:text="#{librarian.copies.table.inventoryNumber}">Inventory #</th>
+            <th th:text="#{librarian.copies.table.status}">Status</th>
+            <th th:text="#{librarian.copies.table.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -37,33 +41,35 @@
                 <!-- Change status only -->
                 <form th:action="@{|/librarian/copies/${copy.id}/status|}" method="post" style="display:inline">
                     <select name="status">
-                        <option th:each="st: ${statuses}"
+                        <option th:each="st : ${statuses}"
                                 th:value="${st}"
                                 th:text="${st}"
                                 th:selected="${st} == ${copy.status}">
                         </option>
                     </select>
-                    <button type="submit" class="btn">Update Status</button>
+                    <button type="submit" class="btn"
+                            th:text="#{librarian.copies.button.updateStatus}">Update Status</button>
                 </form>
 
                 <!-- Edit inventory number & status together -->
-                <form th:action="@{/librarian/copies/update}" method="post" style="display:inline; margin-left:8px;">
+                <form th:action="@{/librarian/copies/update}" method="post"
+                      style="display:inline; margin-left:8px;">
                     <input type="hidden" name="id" th:value="${copy.id}" />
                     <input type="text" name="inventoryNumber"
                            th:value="${copy.inventoryNumber}"
                            style="width:100px;" required />
                     <select name="status">
-                        <option th:each="st: ${statuses}" th:value="${st}" th:text="${st}"
+                        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
                                 th:selected="${st} == ${copy.status}"></option>
                     </select>
-                    <button type="submit" class="btn">Save</button>
+                    <button type="submit" class="btn"
+                            th:text="#{librarian.copies.button.save}">Save</button>
                 </form>
             </td>
         </tr>
-
         <tr th:if="${#lists.isEmpty(copies)}">
             <td colspan="5" style="text-align:center; color:gray;">
-                <em>No copies found.</em>
+                <em th:text="#{librarian.copies.empty}">No copies found.</em>
             </td>
         </tr>
         </tbody>

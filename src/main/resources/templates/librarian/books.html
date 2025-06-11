@@ -2,43 +2,51 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>All Books - Librarian</title>
+    <title th:text="#{librarian.books.title}">All Books - Librarian</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}" />
 </head>
 <body>
+
 <header>
-    <a th:href="@{/librarian}">Dashboard</a>
-    <a th:href="@{/librarian/books}">Books</a>
-    <a th:href="@{/librarian/copies}">Copies</a>
-    <a th:href="@{/librarian/requests}">Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/librarian}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}"         th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"        th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}"      th:text="#{header.requests}">Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"              th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"              th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"                  th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>Books in Library</h2>
+    <h2 th:text="#{librarian.books.heading}">Books in Library</h2>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Genre</th>
-            <th>Copies</th>
+            <th th:text="#{librarian.books.table.id}">ID</th>
+            <th th:text="#{librarian.books.table.title}">Title</th>
+            <th th:text="#{librarian.books.table.author}">Author</th>
+            <th th:text="#{librarian.books.table.genre}">Genre</th>
+            <th th:text="#{librarian.books.table.copies}">Copies</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="book : ${books}">
-            <td th:text="${book.id}"></td>
-            <td th:text="${book.title}"></td>
-            <td th:text="${book.author.firstName + ' ' + book.author.lastName}"></td>
-            <td th:text="${book.genre.name}"></td>
+            <td th:text="${book.id}">1</td>
+            <td th:text="${book.title}">Book Title</td>
+            <td th:text="${book.author.firstName + ' ' + book.author.lastName}">Author</td>
+            <td th:text="${book.genre.name}">Genre</td>
             <td>
-                <a th:href="@{'/librarian/books/' + ${book.id} + '/copies'}">Manage Copies</a>
+                <a th:href="@{'/librarian/books/' + ${book.id} + '/copies'}"
+                   th:text="#{librarian.books.link.manageCopies}">Manage Copies</a>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(books)}">
-            <td colspan="5" style="text-align:center; color:gray;"><em>No books found.</em></td>
+            <td colspan="5" style="text-align:center; color:gray;">
+                <em th:text="#{librarian.books.empty}">No books found.</em>
+            </td>
         </tr>
         </tbody>
     </table>

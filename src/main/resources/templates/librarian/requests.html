@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Book Requests</title>
-    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <meta charset="UTF-8"/>
+    <title th:text="#{librarian.requests.title}">Book Requests</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
 <header>
-    <a th:href="@{/librarian}">Dashboard</a>
-    <a th:href="@{/librarian/books}">Books</a>
-    <a th:href="@{/librarian/copies}">Copies</a>
-    <a th:href="@{/librarian/requests}">Requests</a>
-    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+    <a th:href="@{/librarian}"          th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}"    th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"   th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}" th:text="#{header.requests}">Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang='en'}"         th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang='ru'}"         th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"             th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
-    <h2>All Book Requests</h2>
+    <h2 th:text="#{librarian.requests.heading}">All Book Requests</h2>
 
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Reader</th>
-            <th>Book</th>
-            <th>Copy #</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Requested</th>
-            <th>Issued</th>
-            <th>Returned</th>
-            <th>Actions</th>
+            <th th:text="#{librarian.requests.table.id}">ID</th>
+            <th th:text="#{librarian.requests.table.reader}">Reader</th>
+            <th th:text="#{librarian.requests.table.book}">Book</th>
+            <th th:text="#{librarian.requests.table.copyNumber}">Copy #</th>
+            <th th:text="#{librarian.requests.table.type}">Type</th>
+            <th th:text="#{librarian.requests.table.status}">Status</th>
+            <th th:text="#{librarian.requests.table.requested}">Requested</th>
+            <th th:text="#{librarian.requests.table.issued}">Issued</th>
+            <th th:text="#{librarian.requests.table.returned}">Returned</th>
+            <th th:text="#{librarian.requests.table.actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -52,12 +56,15 @@
                                 th:selected="${st} == ${req.status}">
                         </option>
                     </select>
-                    <button type="submit" class="btn">Update</button>
+                    <button type="submit" class="btn"
+                            th:text="#{librarian.requests.button.update}">Update</button>
                 </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(requests)}">
-            <td colspan="10" style="text-align:center; color:gray;"><em>No requests found.</em></td>
+            <td colspan="10" style="text-align:center; color:gray;">
+                <em th:text="#{librarian.requests.empty}">No requests found.</em>
+            </td>
         </tr>
         </tbody>
     </table>
