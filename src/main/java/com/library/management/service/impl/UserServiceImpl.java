@@ -31,19 +31,12 @@ public class UserServiceImpl implements UserService {
         return userDao.findAll().stream().map(userMapping()).toList();
     }
 
-    private Function<User, User> userMapping() {
-        return user -> {
-            user.setRoles(userRoleDao.findByUserId(user.getId()));
-            return user;
-        };
-    }
     @Override
     @Transactional(readOnly = true)
     public User findById(long id) {
         return userDao.findById(id).map(userMapping())
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
-
     @Override
     public void updateUser(User user, Set<Long> newRoleIds) {
         Set<String> currentRoleIds = userRoleDao.findByUserId(user.getId())
@@ -75,5 +68,12 @@ public class UserServiceImpl implements UserService {
         roleIds.forEach(roleId ->
                 userRoleDao.addRoleForUser(userId, roleId)
         );
+    }
+
+    private Function<User, User> userMapping() {
+        return user -> {
+            user.setRoles(userRoleDao.findByUserId(user.getId()));
+            return user;
+        };
     }
 }
