@@ -42,7 +42,7 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/register")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN")
                         .requestMatchers(new AntPathRequestMatcher("/librarian/**")).hasRole("LIBRARIAN")
-                        .requestMatchers(new AntPathRequestMatcher("/reader/**")).hasAnyRole("READER","LIBRARIAN","ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/reader/**")).hasAnyRole("READER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -59,7 +59,7 @@ public class SecurityConfig {
                             } else if (auths.stream().anyMatch(a -> a.getAuthority().equals("ROLE_LIBRARIAN"))) {
                                 res.sendRedirect(req.getContextPath() + "/librarian");
                             } else {
-                                res.sendRedirect(req.getContextPath() + "/books");
+                                res.sendRedirect(req.getContextPath() + "/reader");
                             }
                         })
                 )

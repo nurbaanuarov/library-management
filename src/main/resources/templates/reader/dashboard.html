@@ -12,8 +12,8 @@
     <a th:href="@{/reader/books}"        th:text="#{header.books}">Books</a>
     <a th:href="@{/reader/requests}"     th:text="#{header.requests}">My Requests</a>
     <span style="margin-left:auto;">
-      <a th:href="@{?lang='en'}"          th:text="#{language.english}">🇬🇧 English</a> |
-      <a th:href="@{?lang='ru'}"          th:text="#{language.russian}">🇷🇺 Russian</a>
+      <a th:href="@{?lang=en}"          th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang=ru}"          th:text="#{language.russian}">🇷🇺 Russian</a>
     </span>
     <a th:href="@{/logout}"              th:text="#{header.logout}">Logout</a>
 </header>
