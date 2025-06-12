@@ -37,10 +37,15 @@ public class BookCopyDAOImpl implements BookCopyDAO {
             "INSERT INTO book_copies (book_id, inventory_number, status) VALUES (?, ?, ?)";
 
     private static final String UPDATE_STATUS =
-            "UPDATE book_copies SET status = ? WHERE id = ?";
+            "UPDATE book_copies SET status = ?::copy_status WHERE id = ?";
 
     private static final String UPDATE_COPY =
-            "UPDATE book_copies SET book_id = ?, inventory_number = ?, status = ? WHERE id = ?";
+            """
+            UPDATE book_copies
+               SET inventory_number = ?,
+                   status           = ?::copy_status
+             WHERE id = ?
+            """;
 
     @Override
     public List<BookCopy> findAll() {
@@ -153,15 +158,12 @@ public class BookCopyDAOImpl implements BookCopyDAO {
         try {
             con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(UPDATE_COPY);
-
-            ps.setLong(1, copy.getBook().getId());
-            ps.setString(2, copy.getInventoryNumber());
-            ps.setString(3, copy.getStatus().name());
-            ps.setLong(4, copy.getId());
-
+            ps.setString(1, copy.getInventoryNumber());
+            ps.setString(2, copy.getStatus().name());
+            ps.setLong(3, copy.getId());
             int affected = ps.executeUpdate();
             if (affected == 0) {
-                throw new DataAccessException("Failed to update book copy: ID not found " + copy.getId());
+                throw new DataAccessException("Updating book copy failed, no rows affected");
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error updating book copy", e);

@@ -1,9 +1,8 @@
 package com.library.management.service;
 
-import com.library.management.model.RequestType;
-
-import java.time.LocalDate;
-
 public interface LibrarianService {
-    void issueCopyManually(Long userId, Long copyId, RequestType type, LocalDate returnDate);
+    void issueInLibrary(Long userId, Long copyId);
+    void giveReserved(Long copyId);
+    void cancelReservation(Long copyId);
+    void returnCopy(Long copyId);
 }

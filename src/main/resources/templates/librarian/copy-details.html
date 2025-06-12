@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="#{librarian.copy.manage_single}">Manage Copy</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<header>
+  <a th:href="@{/librarian}">Dashboard</a>
+  <a th:href="@{/librarian/books}">Books</a>
+  <a th:href="@{/librarian/copies}">All Copies</a>
+  <a th:href="@{/librarian/requests}">Requests</a>
+  <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+  <h2 th:text="#{librarian.copy.manage_single}">Manage Single Copy</h2>
+
+  <p>
+    <strong th:text="#{librarian.copy.book}">Book:</strong>
+    <span th:text="${book.title} + ' by ' + ${book.author.firstName} + ' ' + ${book.author.lastName}"></span>
+  </p>
+  <p>
+    <strong th:text="#{librarian.copy.inventory}">Inventory #:</strong>
+    <span th:text="${copy.inventoryNumber}"></span>
+  </p>
+  <p>
+    <strong th:text="#{librarian.copy.current_status}">Current Status:</strong>
+    <span th:text="${copy.status}"></span>
+  </p>
+
+  <!-- edit inventory number -->
+  <form th:if="${copy.status.name() != 'ISSUED'}"
+        th:action="@{|/librarian/copies/${copy.id}/update|}"
+        method="post">
+    <div class="form-group">
+      <label th:text="#{librarian.copy.edit_inventory}">New Inventory #:</label>
+      <input type="text" name="inventoryNumber"
+             th:value="${copy.inventoryNumber}" required/>
+    </div>
+    <button type="submit" class="btn"
+            th:text="#{librarian.copy.save_inventory}">
+      Save Inventory
+    </button>
+  </form>
+
+  <hr/>
+
+  <!-- AVAILABLE: choose reader -->
+  <div th:if="${copy.status.name() == 'AVAILABLE'}">
+    <form th:action="@{|/librarian/copies/${copy.id}/issue|}" method="post">
+      <div class="form-group">
+        <label th:text="#{librarian.copy.select_reader}">Select Reader:</label>
+        <input list="readerList" name="username" placeholder="type username…" required />
+        <datalist id="readerList">
+          <option th:each="r : ${readers}"
+                  th:value="${r.username}">reader</option>
+        </datalist>
+      </div>
+      <button type="submit" class="btn"
+              th:text="#{librarian.copy.issue_button}">
+        Issue In-Library
+      </button>
+    </form>
+  </div>
+
+  <!-- ISSUED: return -->
+  <div th:if="${copy.status.name() == 'ISSUED'}">
+    <form th:action="@{|/librarian/copies/${copy.id}/return|}" method="post">
+      <button type="submit" class="btn danger"
+              th:text="#{librarian.copy.return_button}">
+        Mark Returned
+      </button>
+    </form>
+  </div>
+
+  <!-- RESERVED: give or cancel -->
+  <div th:if="${copy.status.name() == 'RESERVED'}">
+    <form th:action="@{|/librarian/copies/${copy.id}/giveReserved|}"
+          method="post" style="display:inline">
+      <button type="submit" class="btn"
+              th:text="#{librarian.copy.give_reserved}">
+        Give Reserved
+      </button>
+    </form>
+    <form th:action="@{|/librarian/copies/${copy.id}/cancelReservation|}"
+          method="post" style="display:inline; margin-left:1em;">
+      <button type="submit" class="btn danger"
+              th:text="#{librarian.copy.cancel_reservation}">
+        Cancel Reservation
+      </button>
+    </form>
+  </div>
+
+  <a th:href="@{/librarian/copies}" class="btn"
+     th:text="#{librarian.copy.back_to_list}">
+    ← Back to Copies
+  </a>
+</div>
+</body>
+</html>

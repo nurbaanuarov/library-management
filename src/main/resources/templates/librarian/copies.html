@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>All Copies – Librarian</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+<header>
+    <a th:href="@{/librarian}">Dashboard</a>
+    <a th:href="@{/librarian/books}">Books</a>
+    <a th:href="@{/librarian/copies}">Copies</a>
+    <a th:href="@{/librarian/requests}">Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
+</header>
+
+<div class="container">
+    <h2>All Book Copies</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Book</th>
+            <th>Inventory #</th>
+            <th>Status</th>
+            <th>Manage</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="copy : ${copies}">
+            <td th:text="${copy.id}">1</td>
+            <td th:text="${copy.book.title + ' by ' + copy.book.author.firstName + ' ' + copy.book.author.lastName}">
+                Book Title by Author
+            </td>
+            <td th:text="${copy.inventoryNumber}">INV-001</td>
+            <td th:text="${copy.status}">AVAILABLE</td>
+            <td>
+                <a th:href="@{|/librarian/copies/${copy.id}|}" class="btn">Manage</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(copies)}">
+            <td colspan="5" style="text-align:center; color:gray;">
+                <em>No copies in inventory.</em>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

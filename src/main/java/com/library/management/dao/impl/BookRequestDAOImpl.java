@@ -28,13 +28,23 @@ public class BookRequestDAOImpl implements BookRequestDAO {
 
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id = ?";
 
+    private static final String SELECT_BY_COPY_AND_STATUS =
+            """
+            SELECT 
+              br.id, br.user_id, br.copy_id, br.type, br.status,
+              br.request_date, br.issue_date, br.return_date
+            FROM book_requests br
+            WHERE br.copy_id = ?
+              AND br.status = ?
+            """;
+
     private static final String UPDATE =
             "UPDATE book_requests SET status = ?, issue_date = ?, return_date = ? WHERE id = ?";
 
-    private static final String INSERT = """
-        INSERT INTO book_requests (user_id, copy_id, type, status, request_date, issue_date, return_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """;
+    private static final String INSERT =
+            "INSERT INTO book_requests " +
+                    "(user_id, copy_id, type, status, request_date, issue_date, return_date) " +
+                    "VALUES (?, ?, ?::request_type, ?::request_status, ?, ?, ?)";
 
     @Override
     public List<BookRequest> findAll() {
@@ -75,35 +85,49 @@ public class BookRequestDAOImpl implements BookRequestDAO {
     }
 
     @Override
-    public void save(BookRequest request) {
+    public Optional<BookRequest> findByCopyAndStatus(Long copyId, RequestStatus status) {
+        Connection con = null;
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            try (PreparedStatement ps = con.prepareStatement(SELECT_BY_COPY_AND_STATUS)) {
+                ps.setLong(1, copyId);
+                ps.setString(2, status.name());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        return Optional.empty();
+                    }
+                    return Optional.of(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error querying request for copy=" + copyId + " status=" + status, e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+    @Override
+    public void save(BookRequest req) {
         Connection con = null;
         try {
             con = DataSourceUtils.getConnection(dataSource);
             PreparedStatement ps = con.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, request.getUser().getId());
-            if (request.getCopy() != null) {
-                ps.setLong(2, request.getCopy().getId());
-            } else {
-                ps.setNull(2, Types.BIGINT);
-            }
-            ps.setString(3, request.getType().name());
-            ps.setString(4, request.getStatus().name());
-            ps.setTimestamp(5, Timestamp.valueOf(request.getRequestDate()));
-            if (request.getIssueDate() != null) {
-                ps.setTimestamp(6, Timestamp.valueOf(request.getIssueDate()));
-            } else {
-                ps.setNull(6, Types.TIMESTAMP);
-            }
-            if (request.getReturnDate() != null) {
-                ps.setTimestamp(7, Timestamp.valueOf(request.getReturnDate()));
-            } else {
-                ps.setNull(7, Types.TIMESTAMP);
-            }
+
+            ps.setLong(1, req.getUser().getId());
+            ps.setLong(2, req.getCopy().getId());
+            ps.setString(3, req.getType().name());      // now cast in SQL
+            ps.setString(4, req.getStatus().name());    // now cast in SQL
+            ps.setTimestamp(5, Timestamp.valueOf(req.getRequestDate()));
+            ps.setTimestamp(6,
+                    req.getIssueDate()   != null ? Timestamp.valueOf(req.getIssueDate())   : null);
+            ps.setTimestamp(7,
+                    req.getReturnDate()  != null ? Timestamp.valueOf(req.getReturnDate())  : null);
+
             int rows = ps.executeUpdate();
-            if (rows == 0) throw new DataAccessException("Creating request failed, no rows affected");
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) request.setId(keys.getLong(1));
+            if (rows == 0) {
+                throw new DataAccessException("Creating request failed, no rows affected");
             }
+            // handle generated key...
         } catch (SQLException e) {
             throw new DataAccessException("Error saving book request", e);
         } finally {
@@ -134,15 +158,22 @@ public class BookRequestDAOImpl implements BookRequestDAO {
     }
 
     private BookRequest mapRow(ResultSet rs) throws SQLException {
+        User user = User.builder().id(rs.getLong("user_id")).build();
+        BookCopy copy = BookCopy.builder().id(rs.getLong("copy_id")).build();
+
         return BookRequest.builder()
                 .id(rs.getLong("id"))
-                .user(User.builder().id(rs.getLong("user_id")).build())
-                .copy(BookCopy.builder().id(rs.getLong("copy_id")).build())
+                .user(user)
+                .copy(copy)
                 .type(RequestType.valueOf(rs.getString("type")))
                 .status(RequestStatus.valueOf(rs.getString("status")))
                 .requestDate(rs.getTimestamp("request_date").toLocalDateTime())
-                .issueDate(rs.getTimestamp("issue_date") != null ? rs.getTimestamp("issue_date").toLocalDateTime() : null)
-                .returnDate(rs.getTimestamp("return_date") != null ? rs.getTimestamp("return_date").toLocalDateTime() : null)
+                .issueDate(rs.getTimestamp("issue_date") != null
+                        ? rs.getTimestamp("issue_date").toLocalDateTime()
+                        : null)
+                .returnDate(rs.getTimestamp("return_date") != null
+                        ? rs.getTimestamp("return_date").toLocalDateTime()
+                        : null)
                 .build();
     }
 }

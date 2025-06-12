@@ -15,13 +15,6 @@ public class LibrarianController {
 
     private final BookCopyService copyService;
 
-    @GetMapping
-    public String listCopies(Model model) {
-        model.addAttribute("copies", copyService.findAll());
-        model.addAttribute("statuses", CopyStatus.values());
-        return "librarian/book-copies";
-    }
-
     @PostMapping("/{id}/status")
     public String changeStatus(@PathVariable Long id,
                                @RequestParam CopyStatus status) {
