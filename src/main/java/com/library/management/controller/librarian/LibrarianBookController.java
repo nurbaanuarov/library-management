@@ -28,7 +28,7 @@ public class LibrarianBookController {
 
     @GetMapping("/{bookId}/copies")
     public String manageCopies(
-            @PathVariable Long bookId,
+            @PathVariable("bookId") Long bookId,
             Model model
     ) {
         Book book = bookService.findById(bookId);
@@ -42,7 +42,7 @@ public class LibrarianBookController {
 
     @PostMapping("/{bookId}/copies")
     public String createCopy(
-            @PathVariable Long bookId,
+            @PathVariable("bookId") Long bookId,
             @ModelAttribute("newCopy") BookCopy copy
     ) {
         Book book = bookService.findById(bookId);
