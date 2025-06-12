@@ -3,6 +3,7 @@ package com.library.management.service.impl;
 import com.library.management.dao.AuthorDAO;
 import com.library.management.dao.BookCopyDAO;
 import com.library.management.dao.BookDAO;
+import com.library.management.exception.AuthorNotFoundException;
 import com.library.management.exception.BookNotFoundException;
 import com.library.management.model.Book;
 import com.library.management.model.CopyStatus;
@@ -34,6 +35,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public Book findById(Long id) {
         return bookDAO.findById(id)
+                .map(addAuthorName())
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id " + id));
     }
 
@@ -56,7 +58,10 @@ public class BookServiceImpl implements BookService {
 
     private Function<Book,Book> addAuthorName() {
         return book -> {
-            authorDAO.findById(book.getAuthor().getId()).ifPresent(book::setAuthor);
+            book.setAuthor(
+                    authorDAO.findById(book.getAuthor().getId())
+                            .orElseThrow(() -> new AuthorNotFoundException("Author not found with id " + book.getAuthor().getId()))
+            );
             return book;
         };
     }
