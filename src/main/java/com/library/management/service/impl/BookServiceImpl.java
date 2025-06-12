@@ -1,9 +1,7 @@
 package com.library.management.service.impl;
 
-import com.library.management.dao.AuthorDAO;
 import com.library.management.dao.BookCopyDAO;
 import com.library.management.dao.BookDAO;
-import com.library.management.exception.AuthorNotFoundException;
 import com.library.management.exception.BookNotFoundException;
 import com.library.management.model.Book;
 import com.library.management.model.CopyStatus;
@@ -13,29 +11,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private final BookCopyDAO copyDao;
     private final BookDAO bookDAO;
-    private final AuthorDAO authorDAO;
+    private final BookCopyDAO copyDao;
 
     @Override
     @Transactional(readOnly = true)
     public List<Book> findAll() {
-        return bookDAO.findAll().stream()
-                .map(addAuthorName())
-                .toList();
+        return bookDAO.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Book findById(Long id) {
         return bookDAO.findById(id)
-                .map(addAuthorName())
                 .orElseThrow(() -> new BookNotFoundException("Book not found with id " + id));
     }
 
@@ -54,15 +47,5 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(Long id) {
         bookDAO.deleteById(id);
-    }
-
-    private Function<Book,Book> addAuthorName() {
-        return book -> {
-            book.setAuthor(
-                    authorDAO.findById(book.getAuthor().getId())
-                            .orElseThrow(() -> new AuthorNotFoundException("Author not found with id " + book.getAuthor().getId()))
-            );
-            return book;
-        };
     }
 }
