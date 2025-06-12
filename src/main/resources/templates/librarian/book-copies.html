@@ -9,11 +9,15 @@
 </head>
 <body>
 <header>
-    <a th:href="@{/librarian}"          th:text="#{header.dashboard}">Dashboard</a>
-    <a th:href="@{/librarian/books}"    th:text="#{header.books}">Books</a>
-    <!-- no “Copies” link here, since this is already the copies page for one book -->
-    <a th:href="@{/librarian/requests}" th:text="#{header.requests}">Requests</a>
-    <a th:href="@{/logout}"             th:text="#{header.logout}">Logout</a>
+    <a th:href="@{/librarian}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}"         th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"        th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}"      th:text="#{header.requests}">Requests</a>
+    <span style="margin-left:auto;">
+      <a th:href="@{?lang=en}"              th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang=ru}"              th:text="#{language.russian}">🇷🇺 Russian</a>
+    </span>
+    <a th:href="@{/logout}"                  th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">

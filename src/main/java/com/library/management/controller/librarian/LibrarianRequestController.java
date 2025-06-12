@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/librarian/requests")
 @RequiredArgsConstructor
@@ -15,14 +17,17 @@ public class LibrarianRequestController {
 
     @GetMapping
     public String listRequests(Model model) {
-        model.addAttribute("requests", requestService.findAll());
-        model.addAttribute("statuses", RequestStatus.values());
+        model.addAttribute("requests",    requestService.findAll());
+        model.addAttribute("allStatuses", RequestStatus.values());
+        model.addAttribute("openStatuses",
+                List.of(RequestStatus.PENDING, RequestStatus.ISSUED));
         return "librarian/requests";
     }
 
+
     @PostMapping("/{id}/status")
-    public String updateStatus(@PathVariable Long id,
-                               @RequestParam RequestStatus status) {
+    public String updateStatus(@PathVariable("id") Long id,
+                               @RequestParam("status") RequestStatus status) {
         requestService.updateStatus(id, status);
         return "redirect:/librarian/requests";
     }

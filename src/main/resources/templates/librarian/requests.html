@@ -2,20 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="#{librarian.requests.title}">Book Requests</title>
+    <title th:text="#{librarian.requests.title}">All Book Requests</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
 <header>
-    <a th:href="@{/librarian}"          th:text="#{header.dashboard}">Dashboard</a>
-    <a th:href="@{/librarian/books}"    th:text="#{header.books}">Books</a>
-    <a th:href="@{/librarian/copies}"   th:text="#{header.copies}">Copies</a>
-    <a th:href="@{/librarian/requests}" th:text="#{header.requests}">Requests</a>
+    <a th:href="@{/librarian}"               th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}"         th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"        th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}"      th:text="#{header.requests}">Requests</a>
     <span style="margin-left:auto;">
-      <a th:href="@{?lang=en}"         th:text="#{language.english}">🇬🇧 English</a> |
-      <a th:href="@{?lang=ru}"         th:text="#{language.russian}">🇷🇺 Russian</a>
+      <a th:href="@{?lang=en}"              th:text="#{language.english}">🇬🇧 English</a> |
+      <a th:href="@{?lang=ru}"              th:text="#{language.russian}">🇷🇺 Russian</a>
     </span>
-    <a th:href="@{/logout}"             th:text="#{header.logout}">Logout</a>
+    <a th:href="@{/logout}"                  th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
@@ -40,30 +40,49 @@
         <tr th:each="req : ${requests}">
             <td th:text="${req.id}">1</td>
             <td th:text="${req.user.username}">reader1</td>
-            <td th:text="${req.copy.book.title}">Book Title</td>
-            <td th:text="${req.copy.inventoryNumber}">INV-001</td>
-            <td th:text="${req.type}">HOME</td>
+            <td th:text="|${req.copy.book.title} by ${req.copy.book.author.firstName} ${req.copy.book.author.lastName}|">
+                War and Peace by Tolstoy
+            </td>
+            <td th:text="${req.copy.inventoryNumber}">WP-001</td>
+            <td th:text="${req.type}">IN_LIBRARY</td>
             <td th:text="${req.status}">PENDING</td>
-            <td th:text="${#dates.format(req.requestDate, 'yyyy-MM-dd HH:mm')}">2025-06-11 10:00</td>
-            <td th:text="${req.issueDate != null ? #dates.format(req.issueDate, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
-            <td th:text="${req.returnDate != null ? #dates.format(req.returnDate, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
+            <td th:text="${#temporals.format(req.requestDate,'yyyy-MM-dd HH:mm')}">2025-06-13 01:40</td>
+            <td th:text="${req.issueDate   != null ? #temporals.format(req.issueDate,  'yyyy-MM-dd HH:mm') : '-'}">–</td>
+            <td th:text="${req.returnDate  != null ? #temporals.format(req.returnDate, 'yyyy-MM-dd HH:mm') : '-'}">–</td>
+
             <td>
-                <form th:action="@{|/librarian/requests/${req.id}/status|}" method="post">
-                    <select name="status">
-                        <option th:each="st : ${statuses}"
-                                th:value="${st}"
-                                th:text="${st}"
-                                th:selected="${st} == ${req.status}">
-                        </option>
-                    </select>
-                    <button type="submit" class="btn"
-                            th:text="#{librarian.requests.button.update}">Update</button>
-                </form>
+                <!-- PENDING → can Issue or Cancel -->
+                <div th:if="${req.status.name() == 'PENDING'}">
+                    <form th:action="@{|/librarian/requests/${req.id}/status|}" method="post">
+                        <select name="status" required>
+                            <option value="ISSUED"   th:text="#{librarian.requests.status.issued}">Issue</option>
+                            <option value="CANCELED" th:text="#{librarian.requests.status.canceled}">Cancel</option>
+                        </select>
+                        <button type="submit" th:text="#{librarian.requests.button.update}">Update</button>
+                    </form>
+                </div>
+
+                <!-- ISSUED → can Return only -->
+                <div th:if="${req.status.name() == 'ISSUED'}">
+                    <form th:action="@{|/librarian/requests/${req.id}/status|}" method="post">
+                        <select name="status" required>
+                            <option value="RETURNED" th:text="#{librarian.requests.status.returned}">Return</option>
+                        </select>
+                        <button type="submit" th:text="#{librarian.requests.button.update}">Update</button>
+                    </form>
+                </div>
+
+                <!-- CANCELED or RETURNED → no further actions -->
+                <span th:if="${req.status.name() != 'PENDING' and req.status.name() != 'ISSUED'}">
+                &mdash;
+              </span>
             </td>
         </tr>
+
         <tr th:if="${#lists.isEmpty(requests)}">
-            <td colspan="10" style="text-align:center; color:gray;">
-                <em th:text="#{librarian.requests.empty}">No requests found.</em>
+            <td colspan="10" style="text-align:center; color:gray;"
+                th:text="#{librarian.requests.empty}">
+                No requests found.
             </td>
         </tr>
         </tbody>

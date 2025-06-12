@@ -49,6 +49,9 @@ public class BookDAOImpl implements BookDAO {
 
     private static final String DELETE = "DELETE FROM books WHERE id = ?";
 
+    private static final String COUNT_BY_GENRE =
+            "SELECT count(*) FROM books WHERE genre_id = ?";
+
 
     @Override
     public List<Book> findAll() {
@@ -85,6 +88,23 @@ public class BookDAOImpl implements BookDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error fetching book by ID=" + id, e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+    @Override
+    public long countByGenreId(Long genreId) {
+        Connection con = null;
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(COUNT_BY_GENRE);
+            ps.setLong(1, genreId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong(1) : 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error counting books by genre", e);
         } finally {
             DataSourceUtils.releaseConnection(con, dataSource);
         }

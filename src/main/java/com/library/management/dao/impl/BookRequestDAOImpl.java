@@ -29,17 +29,18 @@ public class BookRequestDAOImpl implements BookRequestDAO {
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id = ?";
 
     private static final String SELECT_BY_COPY_AND_STATUS =
-            """
-            SELECT 
-              br.id, br.user_id, br.copy_id, br.type, br.status,
-              br.request_date, br.issue_date, br.return_date
-            FROM book_requests br
-            WHERE br.copy_id = ?
-              AND br.status = ?
-            """;
+            "SELECT id, user_id, copy_id, type, status, request_date, issue_date, return_date\n" +
+                    "  FROM book_requests\n" +
+                    " WHERE copy_id = ?\n" +
+                    "   AND status = ?::request_status";
+
 
     private static final String UPDATE =
-            "UPDATE book_requests SET status = ?, issue_date = ?, return_date = ? WHERE id = ?";
+            "UPDATE book_requests\n" +
+                    "   SET status      = ?::request_status,\n" +
+                    "       issue_date  = ?,\n" +
+                    "       return_date = ?\n" +
+                    " WHERE id = ?";
 
     private static final String INSERT =
             "INSERT INTO book_requests " +
