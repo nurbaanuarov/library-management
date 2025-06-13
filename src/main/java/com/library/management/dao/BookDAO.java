@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookDAO {
-    List<Book> findAll(int offset, int limit);
+    List<Book> findAll();
     Optional<Book> findById(Long id);
-    long count();
     long countByAuthorId(Long authorId);
     long countByGenreId(Long genreId);
     void save(Book book);
     void deleteById(Long id);
+    List<Book> findPaginated(int offset, int limit);
+    long countAll();
 }

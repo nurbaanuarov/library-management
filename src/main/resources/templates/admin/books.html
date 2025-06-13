@@ -1,3 +1,4 @@
+<!-- src/main/resources/templates/admin/books.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -13,9 +14,9 @@
     <a th:href="@{/admin/genres}"         th:text="#{header.genres}">Genres</a>
     <a th:href="@{/admin/books}"          th:text="#{header.books}">Books</a>
     <span style="margin-left:auto;">
-      <a th:href="@{?lang=en}"           th:text="#{language.english}">🇬🇧 English</a> |
-      <a th:href="@{?lang=ru}"           th:text="#{language.russian}">🇷🇺 Russian</a>
-    </span>
+    <a th:href="@{?lang=en}" th:text="#{language.english}">🇬🇧 English</a> |
+    <a th:href="@{?lang=ru}" th:text="#{language.russian}">🇷🇺 Russian</a>
+  </span>
     <a th:href="@{/logout}"               th:text="#{header.logout}">Logout</a>
 </header>
 
@@ -36,20 +37,20 @@
         <tbody>
         <tr th:each="b : ${books}">
             <td th:text="${b.id}">1</td>
-            <td th:text="${b.title}">Book Title</td>
+            <td th:text="${b.title}">The Title</td>
             <td>
-            <span th:each="a : ${authors}"
-                  th:if="${a.id == b.author.id}"
-                  th:text="${a.firstName + ' ' + a.lastName}">Author</span>
+          <span th:each="a : ${authors}"
+                th:if="${a.id == b.author.id}"
+                th:text="${a.firstName + ' ' + a.lastName}">Author</span>
             </td>
             <td>
-            <span th:each="g : ${genres}"
-                  th:if="${g.id == b.genre.id}"
-                  th:text="${g.name}">Genre</span>
+          <span th:each="g : ${genres}"
+                th:if="${g.id == b.genre.id}"
+                th:text="${g.name}">Genre</span>
             </td>
             <td th:text="${b.totalCopies}">3</td>
             <td>
-                <form th:action="@{/admin/books/delete}" method="post" style="display:inline;">
+                <form th:action="@{/admin/books/delete}" method="post" style="display:inline">
                     <input type="hidden" name="id" th:value="${b.id}"/>
                     <button type="submit" class="btn danger"
                             th:text="#{books.table.actions.delete}">Delete</button>
@@ -64,18 +65,35 @@
         </tbody>
     </table>
 
+    <!-- ← pagination controls → -->
+    <div class="pagination">
+        <ul>
+            <li th:if="${currentPage > 1}">
+                <a th:href="@{/admin/books(page=${currentPage-1},size=${size})}">« Prev</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a th:href="@{/admin/books(page=${i},size=${size})}"
+                   th:text="${i}">1</a>
+            </li>
+            <li th:if="${currentPage < totalPages}">
+                <a th:href="@{/admin/books(page=${currentPage+1},size=${size})}">Next »</a>
+            </li>
+        </ul>
+    </div>
+
     <h3 th:text="#{books.add.heading}">Add New Book</h3>
     <form th:action="@{/admin/books/new}" th:object="${book}" method="post">
         <div class="form-group">
-            <label th:text="#{books.add.title}">Title:</label>
+            <label th:text="#{books.add.title}">Title</label>
             <input type="text" th:field="*{title}" required/>
         </div>
         <div class="form-group">
-            <label th:text="#{books.add.description}">Description:</label>
+            <label th:text="#{books.add.description}">Description</label>
             <textarea th:field="*{description}" rows="3"></textarea>
         </div>
         <div class="form-group">
-            <label th:text="#{books.add.author}">Author:</label>
+            <label th:text="#{books.add.author}">Author</label>
             <select th:field="*{author.id}" required>
                 <option value="" disabled th:text="#{books.add.selectAuthor}">Select an author</option>
                 <option th:each="a : ${authors}"
@@ -84,7 +102,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label th:text="#{books.add.genre}">Genre:</label>
+            <label th:text="#{books.add.genre}">Genre</label>
             <select th:field="*{genre.id}" required>
                 <option value="" disabled th:text="#{books.add.selectGenre}">Select a genre</option>
                 <option th:each="g : ${genres}"
@@ -93,7 +111,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label th:text="#{books.add.totalCopies}">Total Copies:</label>
+            <label th:text="#{books.add.totalCopies}">Total Copies</label>
             <input type="number" min="1" th:field="*{totalCopies}" required/>
         </div>
         <button type="submit" class="btn" th:text="#{books.add.button}">Add Book</button>

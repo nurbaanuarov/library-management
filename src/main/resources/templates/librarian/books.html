@@ -6,17 +6,16 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}" />
 </head>
 <body>
-
 <header>
-    <a th:href="@{/librarian}"               th:text="#{header.dashboard}">Dashboard</a>
-    <a th:href="@{/librarian/books}"         th:text="#{header.books}">Books</a>
-    <a th:href="@{/librarian/copies}"        th:text="#{header.copies}">Copies</a>
-    <a th:href="@{/librarian/requests}"      th:text="#{header.requests}">Requests</a>
+    <a th:href="@{/librarian}"       th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}" th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}"th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}" th:text="#{header.requests}">Requests</a>
     <span style="margin-left:auto;">
-      <a th:href="@{?lang=en}"              th:text="#{language.english}">🇬🇧 English</a> |
-      <a th:href="@{?lang=ru}"              th:text="#{language.russian}">🇷🇺 Russian</a>
-    </span>
-    <a th:href="@{/logout}"                  th:text="#{header.logout}">Logout</a>
+    <a th:href="@{?lang=en}" th:text="#{language.english}">🇬🇧 English</a> |
+    <a th:href="@{?lang=ru}" th:text="#{language.russian}">🇷🇺 Russian</a>
+  </span>
+    <a th:href="@{/logout}" th:text="#{header.logout}">Logout</a>
 </header>
 
 <div class="container">
@@ -35,7 +34,7 @@
         <tbody>
         <tr th:each="book : ${books}">
             <td th:text="${book.id}">1</td>
-            <td th:text="${book.title}">Book Title</td>
+            <td th:text="${book.title}">Title</td>
             <td th:text="${book.author.firstName + ' ' + book.author.lastName}">Author</td>
             <td th:text="${book.genre.name}">Genre</td>
             <td>
@@ -44,12 +43,29 @@
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(books)}">
-            <td colspan="5" style="text-align:center; color:gray;">
+            <td colspan="5" style="text-align:center;color:gray;">
                 <em th:text="#{librarian.books.empty}">No books found.</em>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <!-- pager -->
+    <div class="pagination">
+        <ul>
+            <li th:if="${currentPage > 1}">
+                <a th:href="@{/librarian/books(page=${currentPage-1},size=${size})}">« Prev</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${i == currentPage} ? ' active'">
+                <a th:href="@{/librarian/books(page=${i},size=${size})}"
+                   th:text="${i}">1</a>
+            </li>
+            <li th:if="${currentPage < totalPages}">
+                <a th:href="@{/librarian/books(page=${currentPage+1},size=${size})}">Next »</a>
+            </li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>
