@@ -63,14 +63,15 @@ public class AdminUserController {
     @PostMapping("/{id}")
     public String processEditForm(
             @PathVariable("id") long id,
-            @RequestParam("enabled") Boolean enabledCheckbox,
-            @RequestParam("roles") Set<Long> rolesSelected
+            @RequestParam(value="enabled", defaultValue="false") boolean enabled,
+            @RequestParam(value="roles", required=false) Set<Long> rolesSelected
     ) {
         User user = userService.findById(id);
-
-        user.setEnabled(enabledCheckbox);
-
-        userService.updateUser(user, rolesSelected);
+        user.setEnabled(enabled);
+        userService.updateUser(
+                user,
+                rolesSelected == null ? Collections.emptySet() : rolesSelected
+        );
 
         return "redirect:/admin/users";
     }

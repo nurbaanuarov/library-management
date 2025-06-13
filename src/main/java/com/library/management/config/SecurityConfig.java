@@ -3,13 +3,18 @@ package com.library.management.config;
 import com.library.management.dao.UserDAO;
 import com.library.management.dao.UserRoleDAO;
 import com.library.management.model.User;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -50,7 +55,14 @@ public class SecurityConfig {
                         .loginProcessingUrl("/do-login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .failureUrl("/login?error")
+                        .failureHandler((request, response, exception) -> {
+                            String errorMessage = "Invalid username or password.";
+                            if (exception instanceof DisabledException) {
+                                errorMessage = "Your account is disabled. Please contact the administrator.";
+                            }
+                            request.getSession().setAttribute("LOGIN_ERROR_MESSAGE", errorMessage);
+                            response.sendRedirect(request.getContextPath() + "/login?error");
+                        })
                         .permitAll()
                         .successHandler((req, res, auth) -> {
                             var auths = auth.getAuthorities();

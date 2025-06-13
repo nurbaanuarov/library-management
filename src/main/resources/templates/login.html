@@ -8,31 +8,27 @@
 <body>
 <div class="container">
     <div style="text-align:right; margin-bottom:1rem;">
-        <a th:text="#{language.english}" th:href="@{/login(lang='en')}">English</a>
-        <a th:text="#{language.russian}" th:href="@{/login(lang='ru')}">Русский</a>
+        <a th:href="@{/login(lang='en')}" th:text="#{language.english}">English</a> |
+        <a th:href="@{/login(lang='ru')}" th:text="#{language.russian}">Русский</a>
     </div>
 
     <h2 th:text="#{login.title}">Login</h2>
     <form th:action="@{/do-login}"
-          th:object="${loginForm}"
           method="post">
 
         <div class="form-group">
-            <label th:for="*{username}" th:text="#{login.username}">Username</label>
-            <input id="username" type="text" th:field="*{username}" required />
-            <div th:if="${#fields.hasErrors('username')}"
-                 th:errors="*{username}" class="error"></div>
+            <label for="username" th:text="#{login.username}">Username</label>
+            <input id="username" name="username" type="text" required />
         </div>
 
         <div class="form-group">
-            <label th:for="*{password}" th:text="#{login.password}">Password</label>
-            <input id="password" type="password" th:field="*{password}" required />
-            <div th:if="${#fields.hasErrors('password')}"
-                 th:errors="*{password}" class="error"></div>
+            <label for="password" th:text="#{login.password}">Password</label>
+            <input id="password" name="password" type="password" required />
         </div>
 
-        <div class="error" th:if="${param.error}" th:text="#{login.error}">
-            Invalid username or password.
+        <div class="error"
+             th:if="${session.LOGIN_ERROR_MESSAGE}"
+             th:text="${session.LOGIN_ERROR_MESSAGE}">
         </div>
 
         <button type="submit" class="btn" th:text="#{login.button}">Sign In</button>
