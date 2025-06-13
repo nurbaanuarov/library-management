@@ -34,23 +34,14 @@ public class AdminUserController {
 
     @PostMapping("/new")
     public String createUser(@Valid @ModelAttribute("form") RegistrationForm form,
-                             @RequestParam("roles") Set<Long> roleIds,
-                             RedirectAttributes flash) {
-        try {
-            userService.createUser(form, roleIds);
-        } catch (ValidationException e) {
-            flash.addFlashAttribute("form", form);
-            flash.addFlashAttribute("userCreationError", e.getMessage());
-        }
+                             @RequestParam("roles") Set<Long> roleIds) {
+        userService.createUser(form, roleIds);
         return "redirect:/admin/users";
     }
 
     @GetMapping("/{id}")
     public String showEditForm(@PathVariable("id") long id, Model model) {
         User user = userService.findById(id);
-        if (user == null) {
-            throw new ValidationException("User not found with id=" + id);
-        }
 
         boolean isAdmin = user.getRoles().stream()
                 .anyMatch(role -> role.getName().equals("ADMIN"));
@@ -78,10 +69,6 @@ public class AdminUserController {
             @RequestParam("roles") Set<Long> rolesSelected
     ) {
         User user = userService.findById(id);
-
-        if (user == null) {
-            throw new ValidationException("User not found with id=" + id);
-        }
 
         user.setEnabled(enabledCheckbox);
 

@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="${errorTitle}">Cannot Delete</title>
+    <title th:text="${errorTitle}">Invalid Operation</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}"/>
 </head>
 <body>
 <div class="container error-page">
-    <h1 th:text="${errorTitle}">Cannot Delete</h1>
+    <h1 th:text="${errorTitle}">Invalid Operation</h1>
     <p th:text="${errorMessage}">
-        This entity is still in use and cannot be deleted.
+        You can’t perform that action right now.
     </p>
     <button class="btn" onclick="history.back()" th:text="#{error.back}">Go Back</button>
 </div>

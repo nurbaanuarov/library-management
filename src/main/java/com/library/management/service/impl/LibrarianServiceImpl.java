@@ -60,8 +60,7 @@ public class LibrarianServiceImpl implements LibrarianService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id=" + req.getUser().getId()));
 
         BookCopy fullCopy = copyDao.findById(copyId)
-                .orElseThrow(() ->
-                        new BookCopyNotFoundException("Book copy not found with id=" + copyId));
+                .orElseThrow(() -> new BookCopyNotFoundException("Book copy not found with id=" + copyId));
 
         copyDao.updateStatus(copyId, CopyStatus.ISSUED);
 
@@ -92,8 +91,7 @@ public class LibrarianServiceImpl implements LibrarianService {
     public void returnCopy(Long copyId) {
         BookRequest req = requestDao
                 .findByCopyAndStatus(copyId, RequestStatus.ISSUED)
-                .orElseThrow(() ->
-                        new BookRequestNotFoundException("No ISSUED request for copy id=" + copyId));
+                .orElseThrow(() -> new BookRequestNotFoundException("No ISSUED request for copy id=" + copyId));
 
         req.setStatus(RequestStatus.RETURNED);
         req.setReturnDate(LocalDateTime.now());

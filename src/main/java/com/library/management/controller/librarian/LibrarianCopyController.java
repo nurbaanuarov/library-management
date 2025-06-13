@@ -60,7 +60,6 @@ public class LibrarianCopyController {
             @RequestParam("inventoryNumber") String inventoryNumber,
             @RequestParam("status") CopyStatus status
     ) {
-        // load, modify, save
         BookCopy copy = copyService.findById(copyId);
         copy.setInventoryNumber(inventoryNumber);
         copy.setStatus(status);
