@@ -21,7 +21,7 @@ public class LibrarianBookController {
 
     @GetMapping
     public String listBooks(Model model) {
-        List<Book> books = bookService.findAll();
+        List<Book> books = bookService.findAll(0, Integer.MAX_VALUE);
         model.addAttribute("books", books);
         return "librarian/books";
     }

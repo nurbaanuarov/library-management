@@ -8,6 +8,7 @@ import com.library.management.service.BookCopyService;
 import com.library.management.service.BookService;
 import com.library.management.service.ReaderRequestService;
 import com.library.management.service.UserService;
+import com.library.management.web.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -34,19 +35,29 @@ public class ReaderController {
     }
 
     @GetMapping("/books")
-    public String listBooks(Model model) {
-        List<Book> books = bookService.findAll();
-        Map<Long, Boolean> availability = books.stream()
+    public String listBooks(
+            @RequestParam(value="page", defaultValue="1")    int page,
+            @RequestParam(value="size", defaultValue="5")   int size,
+            Model model
+    ) {
+        Page<Book> bookPage = bookService.findPaginated(page, size);
+        // build your availability map exactly as before
+        Map<Long, Boolean> availability = bookPage.getContent().stream()
                 .collect(Collectors.toMap(
                         Book::getId,
                         b -> bookCopyService.findByBookId(b.getId())
-                                .stream()
-                                .anyMatch(c -> c.getStatus() == CopyStatus.AVAILABLE)
+                                .stream().anyMatch(c -> c.getStatus()==CopyStatus.AVAILABLE)
                 ));
-        model.addAttribute("books", books);
+
+        model.addAttribute("books",        bookPage.getContent());
         model.addAttribute("availability", availability);
+        model.addAttribute("currentPage",  bookPage.getPageNumber());
+        model.addAttribute("totalPages",   bookPage.getTotalPages());
+        model.addAttribute("pageSize",     bookPage.getPageSize());
         return "reader/books";
     }
+
+
 
 
     @GetMapping("/books/{id}")

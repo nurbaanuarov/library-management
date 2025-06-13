@@ -55,21 +55,37 @@ public class BookDAOImpl implements BookDAO {
     private static final String COUNT_BY_AUTHOR =
             "SELECT count(*) FROM books WHERE author_id = ?";
 
+    private static final String SELECT_PAGED = SELECT_ALL + " ORDER BY b.title LIMIT ? OFFSET ?";
+    private static final String COUNT_ALL   = "SELECT count(*) FROM books";
 
     @Override
-    public List<Book> findAll() {
+    public long count() {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = con.prepareStatement(COUNT_ALL);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getLong(1) : 0L;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error counting books", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+
+    @Override
+    public List<Book> findAll(int offset, int limit) {
         List<Book> list = new ArrayList<>();
-        Connection con = null;
-        try {
-            con = DataSourceUtils.getConnection(dataSource);
-            try (PreparedStatement ps = con.prepareStatement(SELECT_ALL);
-                 ResultSet rs = ps.executeQuery()) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = con.prepareStatement(SELECT_PAGED)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs));
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error fetching all books", e);
+            throw new DataAccessException("Error fetching paged books", e);
         } finally {
             DataSourceUtils.releaseConnection(con, dataSource);
         }
