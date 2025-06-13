@@ -29,7 +29,7 @@ public class AdminAuthorController {
 
     @PostMapping("/delete")
     public String deleteAuthor(@RequestParam("id") Long id) {
-        authorService.delete(Author.builder().id(id).build());
+        authorService.deleteById(id);
         return "redirect:/admin/authors";
     }
 }

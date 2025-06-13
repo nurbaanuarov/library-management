@@ -7,5 +7,5 @@ import java.util.List;
 public interface GenreService {
     List<Genre> findAll();
     void save(Genre genre);
-    void delete(Genre genre);
+    void deleteById(Long id);
 }

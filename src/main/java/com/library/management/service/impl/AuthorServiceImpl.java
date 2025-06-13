@@ -1,6 +1,9 @@
 package com.library.management.service.impl;
 
 import com.library.management.dao.AuthorDAO;
+import com.library.management.dao.BookDAO;
+import com.library.management.exception.AuthorNotFoundException;
+import com.library.management.exception.EntityInUseException;
 import com.library.management.model.Author;
 import com.library.management.service.AuthorService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorDAO authorDAO;
+    private final BookDAO bookDAO;
 
     @Transactional(readOnly = true)
     public List<Author> findAll() {
@@ -25,7 +29,16 @@ public class AuthorServiceImpl implements AuthorService {
         authorDAO.save(author);
     }
 
-    public void delete(Author author) {
+    @Override
+    public void deleteById(Long id) {
+        Author author = authorDAO.findById(id)
+                .orElseThrow(() -> new AuthorNotFoundException("Author not found with id=" + id));
+        long inUse = bookDAO.countByAuthorId(author.getId());
+        if (inUse > 0) {
+            throw new EntityInUseException(
+                    "Cannot delete author “" + author.getFirstName() + " " + author.getLastName() +
+                            "” (id=" + author.getId() + "): still referenced by " + inUse + " book(s).");
+        }
         authorDAO.delete(author);
     }
 }

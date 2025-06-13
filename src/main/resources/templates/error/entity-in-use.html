@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${errorTitle}">Error</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<header>
+    <a th:href="@{/librarian}" th:text="#{header.dashboard}">Dashboard</a>
+    <a th:href="@{/librarian/books}" th:text="#{header.books}">Books</a>
+    <a th:href="@{/librarian/copies}" th:text="#{header.copies}">Copies</a>
+    <a th:href="@{/librarian/requests}" th:text="#{header.requests}">Requests</a>
+    <a th:href="@{/logout}" style="margin-left:auto;" th:text="#{header.logout}">Logout</a>
+</header>
+
+<div class="container">
+    <h2 th:text="${errorTitle}">Error</h2>
+    <p th:text="${errorMessage}">An unexpected error occurred.</p>
+    <button class="btn" onclick="history.back()" th:text="#{error.back}">Go Back</button>
+</div>
+</body>
+</html>

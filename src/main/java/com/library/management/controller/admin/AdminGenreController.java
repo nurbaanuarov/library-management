@@ -29,8 +29,7 @@ public class AdminGenreController {
 
     @PostMapping("/delete")
     public String deleteGenre(@RequestParam("id") Long id) {
-        Genre genre = Genre.builder().id(id).build();
-        genreService.delete(genre);
+        genreService.deleteById(id);
         return "redirect:/admin/genres";
     }
 }
