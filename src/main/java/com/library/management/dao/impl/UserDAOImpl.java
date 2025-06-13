@@ -4,6 +4,8 @@ import com.library.management.dao.UserDAO;
 import com.library.management.exception.DataAccessException;
 import com.library.management.model.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.ILoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserDAOImpl implements UserDAO {
     private final DataSource dataSource;
 
@@ -69,18 +72,23 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
+        Connection con = null;
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SELECT);
-             ResultSet rs = ps.executeQuery()) {
+        try {
+            con = DataSourceUtils.getConnection(dataSource);
+            PreparedStatement ps = con.prepareStatement(SELECT);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 users.add(mapRow(rs));
             }
 
+            log.info("Found {} users", users.size());
             return users;
         } catch (SQLException e) {
             throw new DataAccessException("Error querying all users", e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
         }
     }
 

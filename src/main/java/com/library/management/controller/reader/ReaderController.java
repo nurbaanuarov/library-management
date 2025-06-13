@@ -50,7 +50,7 @@ public class ReaderController {
 
 
     @GetMapping("/books/{id}")
-    public String showBook(@PathVariable Long id, Model m) {
+    public String showBook(@PathVariable("id") Long id, Model m) {
         Book b = bookService.findById(id);
         boolean hasAvailable = bookService.hasAvailableCopies(id);
 
@@ -61,8 +61,8 @@ public class ReaderController {
     }
 
     @PostMapping("/books/{id}/request")
-    public String placeRequest(@PathVariable Long id,
-                               @RequestParam RequestType type,
+    public String placeRequest(@PathVariable("id") Long id,
+                               @RequestParam("type") RequestType type,
                                Authentication auth) {
         Long userId = userService.findByUsername(auth.getName()).getId();
         reqService.createRequest(userId, id, type);
@@ -78,7 +78,7 @@ public class ReaderController {
     }
 
     @PostMapping("/requests/{id}/cancel")
-    public String cancel(@PathVariable Long id, Authentication auth) {
+    public String cancel(@PathVariable("id") Long id, Authentication auth) {
         Long userId = userService.findByUsername(auth.getName()).getId();
         reqService.cancelRequest(id, userId);
         return "redirect:/reader/requests";

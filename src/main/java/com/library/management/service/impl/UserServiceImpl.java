@@ -28,7 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        return userDao.findAll().stream().map(userMapping()).toList();
+        return userDao.findAll().stream()
+                .map(userMapping())
+                .toList();
     }
 
     @Override

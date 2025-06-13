@@ -45,7 +45,10 @@
             <span th:each="r,st: ${u.roles}"
                   th:text="${r.name + (st.last? '' : ', ')}">ROLE</span>
             </td>
-            <td th:text="${u.enabled? #{users.enabled.yes} : #{users.enabled.no}}">YES</td>
+            <td th:switch="${u.enabled}">
+                <span th:case="true"  th:text="#{users.enabled.yes}">YES</span>
+                <span th:case="false" th:text="#{users.enabled.no}">NO</span>
+            </td>
             <td>
                 <a th:href="@{'/admin/users/' + ${u.id}}"
                    th:text="#{users.table.actions.edit}">Edit</a>
