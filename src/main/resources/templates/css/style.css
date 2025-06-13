@@ -1,11 +1,23 @@
 /* style.css */
+
+/* ──────────────────────────────────────────────────
+   Base & Reset
+────────────────────────────────────────────────── */
+* {
+    box-sizing: border-box;
+}
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #2c3e50;
+    line-height: 1.5;
 }
 
+/* ──────────────────────────────────────────────────
+   Login / Register “.container” form
+────────────────────────────────────────────────── */
 .container {
     width: 100%;
     max-width: 400px;
@@ -16,42 +28,22 @@ body {
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
-.info-container {
-    max-width: 1000px;
-    margin: 24px auto;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
 .form-group {
     margin-bottom: 15px;
 }
-
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
-
 input[type="text"],
 input[type="password"],
-input[type="email"]{
+input[type="email"] {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
 }
-
 .btn {
     display: block;
     width: 100%;
@@ -62,29 +54,112 @@ input[type="email"]{
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    text-align: center;
 }
-
 .btn:hover {
     background-color: #0056b3;
 }
-
 .error {
     margin-top: 1rem;
     color: #d9534f;
     text-align: center;
 }
 
+/* ──────────────────────────────────────────────────
+   Header Nav (for reader pages)
+────────────────────────────────────────────────── */
 header {
-    background: #2c3e50;
-    padding: 12px 24px;
     display: flex;
     align-items: center;
+    background: #2c3e50;
+    padding: 0.75rem 1.5rem;
 }
 header a {
-    color: white;
-    margin-right: 16px;
+    color: #ecf0f1;
     text-decoration: none;
+    margin-right: 1rem;
+    font-weight: bold;
+    font-size: 0.95rem;
 }
 header a:hover {
     text-decoration: underline;
+}
+header span {
+    margin-left: auto;
+    font-size: 0.9rem;
+}
+header span a {
+    margin: 0 0.25rem;
+}
+
+/* ──────────────────────────────────────────────────
+   Reader “.info-container” wrapper & tables
+────────────────────────────────────────────────── */
+.info-container {
+    max-width: 900px;
+    margin: 24px auto;
+    background-color: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.info-container h2 {
+    margin-top: 0;
+    font-size: 1.6rem;
+    text-align: center;
+    color: #2c3e50;
+}
+.info-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.info-container th,
+.info-container td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e1e5e8;
+}
+.info-container th {
+    background: #ecf0f1;
+    text-align: left;
+    font-weight: bold;
+}
+.info-container tr:nth-child(even) {
+    background: #fafbfb;
+}
+
+/* inline “Request” links */
+.info-container a {
+    color: #3498db;
+    text-decoration: none;
+}
+.info-container a:hover {
+    text-decoration: underline;
+}
+
+/* small buttons within tables */
+.info-container .btn {
+    display: inline-block;
+    width: auto;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* empty‐state & unavailable text */
+.info-container em,
+.info-container .unavailable {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* make sure link-buttons in the info-container always show white text */
+.info-container a.btn {
+    background-color: #007bff;  /* or whatever blue you like */
+    color: #fff !important;      /* force the text to white */
+    opacity: 1 !important;       /* remove any fading */
+}
+.info-container a.btn:hover {
+    background-color: #0056b3;
+    color: #fff;
 }
