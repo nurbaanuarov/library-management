@@ -226,10 +226,3 @@ Aim: ≥ 50% coverage on DAOs & services.
 * **Security**: PreparedStatements to prevent SQL injection
 * **Logging**: (Optional) add SLF4J `@Slf4j` in services & controllers for fine-grained tracing
 
----
-
-## License
-
-MIT © Your Name / Your Organization
-
-Feel free to open issues or contribute via pull requests!
