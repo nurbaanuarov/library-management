@@ -10,6 +10,7 @@ public interface BookCopyDAO {
     List<BookCopy> findAll();
     List<BookCopy> findByBookId(Long bookId);
     Optional<BookCopy> findById(Long id);
+    Optional<BookCopy> findFirstAvailableByBookId(Long bookId);
     void save(BookCopy copy);
     void updateStatus(Long copyId, CopyStatus newStatus);
     void update(BookCopy copy);

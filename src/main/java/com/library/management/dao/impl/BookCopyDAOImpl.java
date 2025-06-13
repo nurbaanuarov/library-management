@@ -54,6 +54,11 @@ public class BookCopyDAOImpl implements BookCopyDAO {
              WHERE id = ?
             """;
 
+    private static final String SELECT_FIRST_AVAILABLE =
+            SELECT_ALL +
+                    " WHERE c.book_id = ? AND c.status = ?::copy_status\n" +
+                    " LIMIT 1";
+
     @Override
     public List<BookCopy> findAll() {
         List<BookCopy> copies = new ArrayList<>();
@@ -102,6 +107,22 @@ public class BookCopyDAOImpl implements BookCopyDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error fetching copy by id=" + id, e);
+        } finally {
+            DataSourceUtils.releaseConnection(con, dataSource);
+        }
+    }
+
+    @Override
+    public Optional<BookCopy> findFirstAvailableByBookId(Long bookId) {
+        Connection con = DataSourceUtils.getConnection(dataSource);
+        try (PreparedStatement ps = con.prepareStatement(SELECT_FIRST_AVAILABLE)) {
+            ps.setLong(1, bookId);
+            ps.setString(2, CopyStatus.AVAILABLE.name());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(mapRow(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error fetching first available copy for bookId=" + bookId, e);
         } finally {
             DataSourceUtils.releaseConnection(con, dataSource);
         }

@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private static final org.slf4j.Logger log =
+            org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler({
             AuthorNotFoundException.class,
             BookNotFoundException.class,
@@ -37,6 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataAccessException.class)
     public String handleDatabase(DataAccessException ex, Model model) {
+        log.error("Database operation failed", ex);
         model.addAttribute("errorTitle", "Database Error");
         model.addAttribute("errorMessage", "An unexpected database error occurred.");
         return "error/database-error";

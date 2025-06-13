@@ -9,6 +9,7 @@ public interface BookCopyService {
     List<BookCopy> findAll();
     List<BookCopy> findByBookId(Long bookId);
     BookCopy findById(Long id);
+    BookCopy findFirstAvailableByBookId(Long bookId);
     void create(BookCopy copy);
     void changeStatus(Long copyId, CopyStatus newStatus);
     void update(BookCopy copy);

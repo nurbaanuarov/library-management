@@ -37,6 +37,12 @@ public class BookCopyServiceImpl implements BookCopyService {
     }
 
     @Override
+    public BookCopy findFirstAvailableByBookId(Long bookId) {
+        return bookCopyDAO.findFirstAvailableByBookId(bookId)
+                .orElseThrow(() -> new BookCopyNotFoundException("Book copy not found with book id " + bookId));
+    }
+
+    @Override
     public void create(BookCopy copy) {
         bookCopyDAO.save(copy);
     }
